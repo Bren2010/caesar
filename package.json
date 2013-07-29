@@ -1,11 +1,10 @@
 {
-  "name": "Secure",
+  "name": "caesar",
+  "author": "Brendan Mc."
   "version": "0.0.1",
-  "private": true,
+  "main": "caesar.coffee",
   "dependencies": {
     "coffee-script": "*",
-    "ursa": "*",
-    "async": "*",
-    "bigdecimal": "*"
+    "ursa": "*"
   }
 }

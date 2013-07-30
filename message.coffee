@@ -1,7 +1,7 @@
 crypto = require 'crypto'
 ursa = require 'ursa'
 stream = require 'stream'
-keyLib = require './key.coffee'
+keyLib = require './key'
 
 class exports.Encrypter extends stream.Transform
     constructor: (@keys, @confidential, @integrous, @cut = 14336) ->

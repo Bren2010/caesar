@@ -1,10 +1,9 @@
 {
   "name": "caesar",
-  "author": "Brendan Mc."
-  "version": "0.0.1",
-  "main": "caesar.coffee",
+  "author": "Brendan Mc.",
+  "version": "1.0.0",
+  "main": "caesar.js",
   "dependencies": {
-    "coffee-script": "*",
     "ursa": "*"
   }
 }

@@ -1,4 +1,4 @@
-caesar = require '../caesar.coffee'
+caesar = require './../caesar'
 
 encoder = new caesar.format.EncodeByLength()
 decoder = new caesar.format.DecodeByLength()

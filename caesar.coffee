@@ -1,3 +1,3 @@
-exports.format = require './format.coffee'
-exports.key = require './key.coffee'
-exports.message = require './message.coffee'
+exports.format = require './format'
+exports.key = require './key'
+exports.message = require './message'

@@ -1,4 +1,4 @@
-caesar = require '../caesar.coffee'
+caesar = require './../caesar.coffee'
 
 key = caesar.key.createRandom()
 

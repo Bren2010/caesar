@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>message.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="caesar.html">
+                caesar.coffee
+              </a>
+            
+              
+              <a class="source" href="format.html">
+                format.coffee
+              </a>
+            
+              
+              <a class="source" href="key.html">
+                key.coffee
+              </a>
+            
+              
+              <a class="source" href="message.html">
+                message.coffee
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>message.coffee</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>crypto = require <span class="string">'crypto'</span>
+ursa = require <span class="string">'ursa'</span>
+stream = require <span class="string">'stream'</span>
+keyLib = require <span class="string">'./key'</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Standard and recommended class for encrypting and authenticating stream-like
+data.</p>
+<ol>
+<li><code>keys</code> is a hash of key-related data.  May contain the following  fields:<ul>
+<li><code>key</code> - A random symmetric key, usually through
+<code>caesar.key.createRandom()</code>.  If present, this key will be used on all
+messages.  If not present, a random key will be created for each message.</li>
+<li><code>public</code> - An array or hash of public keys.  If a hash, the key&#39;s owner
+can be identified easier (by anybody--not just the owner).  If present, a
+keyring will be available to the owners of the corresponding private keys
+that allows them to read the message without any previous knowledge of
+the symmetric key.</li>
+<li><code>private</code> - An array or hash of private keys.  If a hash, the key&#39;s owner
+can be identified easier (by anybody--not just the owner).  If present, 
+asymmetric authentication can be used (signatures), which is publicly
+verifiable.</li>
+</ul>
+</li>
+<li><code>confidential</code> is whether or not the data should be encrypted to prevent
+eavesdropping.  <em>(Boolean)</em></li>
+<li><code>integrous</code> is the type of integrity that should be maintained.  Can be
+null (no integrity), &quot;sym&quot; (symmetric integrity, verifiable by others with
+the secret key), and &quot;asym&quot; (asymmetric integrity, verifiable by anyone).
+<em>(String)</em></li>
+<li><code>cut</code> is the maximum size of a plaintext chunk (where it should be cut).
+If you get strange errors, try lowering this below the default.  <em>(Number)</em></li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">exports</span>.<span class="title">Encrypter</span> <span class="keyword">extends</span> <span class="title">stream</span>.<span class="title">Transform</span></span>
+    constructor: (<span class="property">@keys</span>, <span class="property">@confidential</span>, <span class="property">@integrous</span>, <span class="property">@cut</span> = <span class="number">14336</span>) -&gt;
+        <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">this</span> <span class="keyword">instanceof</span> exports.Encrypter
+            <span class="keyword">return</span> <span class="keyword">new</span> exports.Encrypter <span class="property">@keys</span>, <span class="property">@confidential</span>, <span class="property">@integrous</span>, <span class="property">@cut</span>
+        
+        stream.Transform.call <span class="keyword">this</span>, objectMode: <span class="literal">true</span>, decodeStrings: <span class="literal">true</span>
+        <span class="property">@leftover</span> = <span class="keyword">new</span> Buffer <span class="number">0</span>
+        
+        <span class="keyword">if</span> <span class="property">@confidential</span> <span class="keyword">isnt</span> <span class="literal">true</span> <span class="keyword">and</span> <span class="property">@confidential</span> <span class="keyword">isnt</span> <span class="literal">false</span>
+            <span class="keyword">throw</span> <span class="string">'Confidential must be true or false.'</span>
+        
+        <span class="keyword">if</span> <span class="property">@integrous</span>? <span class="keyword">and</span> <span class="property">@integrous</span> <span class="keyword">isnt</span> <span class="string">'sym'</span> <span class="keyword">and</span> <span class="property">@integrous</span> <span class="keyword">isnt</span> <span class="string">'asym'</span>
+            <span class="keyword">throw</span> <span class="string">'Integrous must be null, sym, or asym.'</span>
+        
+        requiresKey = <span class="property">@confidential</span> <span class="keyword">or</span> <span class="property">@integrous</span> <span class="keyword">is</span> <span class="string">'sym'</span>
+        <span class="keyword">if</span> requiresKey <span class="keyword">and</span> <span class="keyword">not</span> <span class="property">@keys</span>.key? <span class="keyword">and</span> <span class="keyword">not</span> <span class="property">@keys</span>.public?
+            <span class="keyword">throw</span> <span class="string">'No symmetric or public key.'</span>
+        
+        <span class="keyword">if</span> <span class="property">@integrous</span> <span class="keyword">is</span> <span class="string">'asym'</span> <span class="keyword">and</span> <span class="keyword">not</span> <span class="property">@keys</span>.private?
+            <span class="keyword">throw</span> <span class="string">'No private key to sign messages with.'</span>
+        
+        <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@confidential</span> <span class="keyword">then</span> <span class="property">@buffer</span> = <span class="keyword">new</span> stream.PassThrough()
+        <span class="keyword">else</span> <span class="keyword">if</span> <span class="property">@keys</span>.key?
+            <span class="property">@buffer</span> = crypto.createCipher <span class="string">'aes-256-ctr'</span>, <span class="property">@keys</span>.key
+    
+    _transform: (dump, encoding, done) -&gt;
+        <span class="keyword">while</span> dump.length <span class="keyword">isnt</span> <span class="number">0</span> <span class="comment"># Chop up dump.</span>
+            len = <span class="keyword">if</span> dump.length &gt; <span class="property">@cut</span> <span class="keyword">then</span> <span class="property">@cut</span> <span class="keyword">else</span> dump.length
+            chunk = <span class="keyword">new</span> Buffer len
+            dump.copy chunk
+            dump = dump.slice len
+            
+            <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@keys</span>.key? <span class="comment"># Generate random key if needed.</span>
+                key = keyLib.createRandom()
+                <span class="property">@buffer</span> = crypto.createCipher <span class="string">'aes-256-ctr'</span>, key
+            <span class="keyword">else</span> key = <span class="property">@keys</span>.key
+            
+            <span class="property">@buffer</span>.write chunk
+            data = <span class="property">@buffer</span>.read()
+            footer = {}
+            
+            <span class="keyword">if</span> <span class="property">@integrous</span> <span class="keyword">is</span> <span class="string">'sym'</span> <span class="comment"># Calculate HMAC.</span>
+                mac = crypto.createHmac <span class="string">'sha512'</span>, key
+                mac.end data
+                footer.mac = mac.read().toString <span class="string">'base64'</span>
+            
+            <span class="keyword">if</span> <span class="property">@integrous</span> <span class="keyword">is</span> <span class="string">'asym'</span> <span class="comment"># Calculate signature.</span>
+                sigs = {}
+                footer.sigs = <span class="keyword">if</span> <span class="property">@keys</span>.private <span class="keyword">instanceof</span> Array <span class="keyword">then</span> [] <span class="keyword">else</span> {}
+                sigs[k] = ursa.createSigner <span class="string">'sha512'</span> <span class="keyword">for</span> k <span class="keyword">of</span> <span class="property">@keys</span>.private
+                sigs[k].update data <span class="keyword">for</span> k <span class="keyword">of</span> <span class="property">@keys</span>.private
+                footer.sigs[k] = sigs[k].sign v <span class="keyword">for</span> k, v <span class="keyword">of</span> <span class="property">@keys</span>.private
+                footer.sigs[k] = v.toString <span class="string">'base64'</span> <span class="keyword">for</span> k, v <span class="keyword">of</span> footer.sigs
+            
+            <span class="keyword">if</span> <span class="property">@keys</span>.public? <span class="comment"># Calculate keyring.</span>
+                footer.keys = <span class="keyword">if</span> <span class="property">@keys</span>.public <span class="keyword">instanceof</span> Array <span class="keyword">then</span> [] <span class="keyword">else</span> {}
+                footer.keys[k] = v.encrypt key <span class="keyword">for</span> k, v <span class="keyword">of</span> <span class="property">@keys</span>.public
+                footer.keys[k] = v.toString <span class="string">'base64'</span> <span class="keyword">for</span> k, v <span class="keyword">of</span> footer.keys
+            
+            footer = JSON.stringify footer
+            out = <span class="keyword">new</span> Buffer <span class="number">4</span> + data.length + footer.length
+            out.writeUInt16BE data.length, <span class="number">0</span>
+            data.copy out, <span class="number">2</span>, <span class="number">0</span>, data.length
+            out.writeUInt16BE footer.length, data.length + <span class="number">2</span>
+            out.write footer, data.length + <span class="number">4</span>
+            
+            more = <span class="property">@push</span> out
+            <span class="keyword">if</span> <span class="keyword">not</span> more <span class="keyword">then</span> <span class="keyword">return</span> done()
+        
+        done()
+    
+    _flush: (done) -&gt;
+        <span class="property">@push</span> <span class="keyword">if</span> <span class="property">@leftover</span>.length <span class="keyword">is</span> <span class="number">0</span> <span class="keyword">then</span> <span class="literal">null</span> <span class="keyword">else</span> <span class="property">@leftover</span>
+        <span class="property">@leftover</span> = <span class="keyword">new</span> Buffer <span class="number">0</span>
+        done()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Standard and recommended class for decrypting and verifying stream-like data.</p>
+<ol>
+<li><code>keys</code> is a hash of key-related data.  May contain the following  fields:<ul>
+<li><code>key</code> - A random symmetric key, usually through
+<code>caesar.key.createRandom()</code>.  If present, this key will be used on all
+messages.  If not present, a keyring must be present to decrypt messages.</li>
+<li><code>public</code> - An array or hash of public keys.  If a hash, the key&#39;s owner
+can be identified easier.  If present, they will be used to verify
+signatures.</li>
+<li><code>private</code> - An array or hash of private keys.  If a hash, the key&#39;s owner 
+can be identified easier.  If present, they will be used to derive
+symmetric keys from a keyring.</li>
+</ul>
+</li>
+<li><code>confidential</code> is whether or not the data should be encrypted to prevent
+eavesdropping.  Must match the Encrypter&#39;s value.  <em>(Boolean)</em></li>
+<li><code>integrous</code> is the type of integrity that should be maintained.  Can be
+null (no integrity), &quot;sym&quot; (symmetric integrity, verifiable by others with
+the secret key), and &quot;asym&quot; (asymmetric integrity, verifiable by anyone).
+Must match the Encrypter&#39;s value.  <em>(String)</em></li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">exports</span>.<span class="title">Decrypter</span> <span class="keyword">extends</span> <span class="title">stream</span>.<span class="title">Transform</span></span>
+    constructor: (<span class="property">@keys</span>, <span class="property">@confidential</span>, <span class="property">@integrous</span>) -&gt;
+        <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">this</span> <span class="keyword">instanceof</span> exports.Decrypter
+            <span class="keyword">return</span> <span class="keyword">new</span> exports.Decrypter <span class="property">@keys</span>, <span class="property">@confidential</span>, <span class="property">@integrous</span>
+        
+        stream.Transform.call <span class="keyword">this</span>, decodeStrings: <span class="literal">true</span>
+        
+        <span class="keyword">if</span> <span class="property">@confidential</span> <span class="keyword">isnt</span> <span class="literal">true</span> <span class="keyword">and</span> <span class="property">@confidential</span> <span class="keyword">isnt</span> <span class="literal">false</span>
+            <span class="keyword">throw</span> <span class="string">'Confidential must be true or false.'</span>
+        
+        <span class="keyword">if</span> <span class="property">@integrous</span>? <span class="keyword">and</span> <span class="property">@integrous</span> <span class="keyword">isnt</span> <span class="string">'sym'</span> <span class="keyword">and</span> <span class="property">@integrous</span> <span class="keyword">isnt</span> <span class="string">'asym'</span>
+            <span class="keyword">throw</span> <span class="string">'Integrous must be null, sym, or asym.'</span>
+        
+        requiresKey = <span class="property">@confidential</span> <span class="keyword">or</span> <span class="property">@integrous</span> <span class="keyword">is</span> <span class="string">'sym'</span>
+        <span class="keyword">if</span> requiresKey <span class="keyword">and</span> <span class="keyword">not</span> <span class="property">@keys</span>.key? <span class="keyword">and</span> <span class="keyword">not</span> <span class="property">@keys</span>.private?
+            <span class="keyword">throw</span> <span class="string">'No symmetric or private key.'</span>
+        
+        <span class="keyword">if</span> <span class="property">@keys</span>.key? <span class="keyword">and</span> <span class="property">@confidential</span>
+            <span class="property">@cipher</span> = crypto.createDecipher <span class="string">'aes-256-ctr'</span>, <span class="property">@keys</span>.key
+        <span class="keyword">else</span> <span class="property">@cipher</span> = <span class="keyword">new</span> stream.PassThrough()
+    
+    _transform: (chunk, encoding, done) -&gt;
+        dlen = chunk.readUInt16BE <span class="number">0</span>
+        data = chunk.slice <span class="number">2</span>, <span class="number">2</span> + dlen
+        
+        flen = chunk.readUInt16BE <span class="number">2</span> + dlen
+        footer = JSON.parse chunk.slice <span class="number">4</span> + dlen
+        
+        <span class="keyword">if</span> <span class="keyword">not</span> data? <span class="keyword">then</span> <span class="keyword">return</span> done <span class="string">'No payload.'</span>
+        <span class="keyword">if</span> <span class="keyword">not</span> footer.mac? <span class="keyword">and</span> <span class="property">@integrous</span> <span class="keyword">is</span> <span class="string">'sym'</span> <span class="keyword">then</span> <span class="keyword">return</span> done <span class="string">'No MAC.'</span>
+        <span class="keyword">if</span> <span class="keyword">not</span> footer.sigs? <span class="keyword">and</span> <span class="property">@integrous</span> <span class="keyword">is</span> <span class="string">'asym'</span> <span class="keyword">then</span> <span class="keyword">return</span> done <span class="string">'No sigs.'</span>
+        
+        requiresKey = <span class="property">@confidential</span> <span class="keyword">or</span> <span class="property">@integrous</span> <span class="keyword">is</span> <span class="string">'sym'</span>
+        <span class="keyword">if</span> requiresKey <span class="keyword">and</span> <span class="keyword">not</span> <span class="property">@keys</span>.key? <span class="keyword">and</span> <span class="keyword">not</span> footer.keys?
+            <span class="keyword">return</span> done <span class="string">'No method of key derivation.'</span>
+        
+        key = <span class="literal">null</span>
+        <span class="keyword">if</span> <span class="property">@keys</span>.key? <span class="comment"># Derive key if needed.</span>
+            key = <span class="property">@keys</span>.key
+        <span class="keyword">else</span>
+            <span class="keyword">if</span> footer.keys <span class="keyword">instanceof</span> Array
+                <span class="keyword">for</span> tag <span class="keyword">in</span> footer.keys
+                    <span class="keyword">for</span> n, privKey <span class="keyword">of</span> <span class="property">@keys</span>.private
+                        <span class="keyword">try</span> key = privKey.decrypt tag, <span class="string">'base64'</span>
+                        <span class="keyword">catch</span> err <span class="keyword">then</span> key = <span class="literal">null</span>
+                        
+                        <span class="keyword">if</span> key? <span class="keyword">then</span> <span class="keyword">break</span>
+                    
+                    <span class="keyword">if</span> key? <span class="keyword">then</span> <span class="keyword">break</span>
+            <span class="keyword">else</span>
+                keys = (key <span class="keyword">for</span> key <span class="keyword">of</span> <span class="property">@keys</span>.private <span class="keyword">when</span> footer.keys[key]?)
+                <span class="keyword">if</span> keys.length <span class="keyword">is</span> <span class="number">0</span>
+                    <span class="keyword">return</span> done <span class="string">'No valid keys for decryption.'</span>
+                
+                <span class="keyword">for</span> k <span class="keyword">in</span> keys
+                    <span class="keyword">try</span> key = <span class="property">@keys</span>.private[k].decrypt footer.keys[k], <span class="string">'base64'</span>
+                    <span class="keyword">catch</span> err <span class="keyword">then</span> key = <span class="literal">null</span>
+                    
+                    <span class="keyword">if</span> key? <span class="keyword">then</span> <span class="keyword">break</span>
+        
+        <span class="keyword">if</span> <span class="keyword">not</span> key? <span class="keyword">then</span> <span class="keyword">return</span> done <span class="string">'No key was successfully derived.'</span>
+        
+        <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@keys</span>.key? <span class="comment"># Intialize new cipher if needed.</span>
+            <span class="property">@cipher</span> = crypto.createDecipher <span class="string">'aes-256-ctr'</span>, key
+        
+        <span class="keyword">if</span> <span class="property">@integrous</span> <span class="keyword">is</span> <span class="string">'sym'</span> <span class="comment"># Verify an HMAC.</span>
+            mac = crypto.createHmac <span class="string">'sha512'</span>, key
+            mac.end footer.mac, <span class="string">'base64'</span>
+            candidateTag = mac.read().toString <span class="string">'base64'</span>
+            
+            mac = crypto.createHmac <span class="string">'sha512'</span>, key
+            mac.end data
+            tag = mac.read()
+            
+            mac = crypto.createHmac <span class="string">'sha512'</span>, key
+            mac.end tag
+            tag = mac.read().toString <span class="string">'base64'</span>
+            
+            <span class="keyword">if</span> candidateTag <span class="keyword">isnt</span> tag <span class="keyword">then</span> <span class="keyword">return</span> done <span class="string">'Bad MAC.'</span>
+        
+        <span class="keyword">if</span> <span class="property">@integrous</span> <span class="keyword">is</span> <span class="string">'asym'</span> <span class="comment"># Verify a signature.</span>
+            ok = <span class="literal">false</span>
+            <span class="keyword">if</span> footer.sigs <span class="keyword">instanceof</span> Array
+                <span class="keyword">for</span> sig <span class="keyword">in</span> footer.sigs
+                    <span class="keyword">for</span> pubKey <span class="keyword">in</span> <span class="property">@keys</span>.public
+                        v = ursa.createVerifier <span class="string">'sha512'</span>
+                        v.update data
+                        ok = v.verify pubKey, sig, <span class="string">'base64'</span>
+                        <span class="keyword">if</span> ok <span class="keyword">then</span> <span class="keyword">break</span>
+                    
+                    <span class="keyword">if</span> ok <span class="keyword">then</span> <span class="keyword">break</span>
+            <span class="keyword">else</span>
+                keys = (key <span class="keyword">for</span> key <span class="keyword">of</span> <span class="property">@keys</span>.public <span class="keyword">when</span> footer.sigs[key]?)
+                <span class="keyword">if</span> keys.length <span class="keyword">is</span> <span class="number">0</span> <span class="keyword">then</span> <span class="keyword">return</span> done <span class="string">'No valid keys for auth.'</span>
+                
+                <span class="keyword">for</span> k <span class="keyword">in</span> keys
+                    <span class="keyword">try</span>
+                        v = ursa.createVerifier <span class="string">'sha512'</span>
+                        v.update data
+                        ok = v.verify <span class="property">@keys</span>.public[k], footer.sigs[k], <span class="string">'base64'</span>
+                        <span class="keyword">if</span> ok <span class="keyword">then</span> <span class="keyword">break</span>
+                    <span class="keyword">catch</span> e
+            
+            <span class="keyword">if</span> <span class="keyword">not</span> ok <span class="keyword">then</span> <span class="keyword">return</span> done <span class="string">'Bad signature.'</span>
+        
+        <span class="property">@cipher</span>.write data <span class="comment"># Decrypt the message.</span>
+        <span class="property">@push</span> <span class="property">@cipher</span>.read()
+        done()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>An implementation of Synthetic IV encryption.  SIV is a method of
+deterministic and authenticated encryption, commonly used in encrypted
+databases and insecure keystores.  This is because given data can be encrypted
+and used in a search for other related SIV encrypted information which can
+then be decrypted (unlike with a hash, for example).  Because SIV is
+deterministic, only use it on data whose structure prevents repetition (like
+user ids, usernames, or randomly generated keys).</p>
+<ol>
+<li><code>key1</code> - Randomly generated symmetric key, usually through 
+<code>caesar.key.createRandom()</code>.</li>
+<li><code>key2</code> - See above.  Should be different from key1.</li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">exports</span>.<span class="title">SIVEncrypter</span> <span class="keyword">extends</span> <span class="title">stream</span>.<span class="title">Transform</span></span>
+    constructor: (<span class="property">@key1</span>, <span class="property">@key2</span>) -&gt;
+        <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">this</span> <span class="keyword">instanceof</span> exports.SIVEncrypter
+            <span class="keyword">return</span> <span class="keyword">new</span> exports.SIVEncrypter <span class="property">@key1</span>, <span class="property">@key2</span>
+        
+        stream.Transform.call <span class="keyword">this</span>, objectMode: <span class="literal">true</span>, decodeStrings: <span class="literal">true</span>
+        <span class="property">@leftover</span> = <span class="keyword">new</span> Buffer <span class="number">0</span>
+    
+    _transform: (dump, encoding, done) -&gt;
+        <span class="keyword">while</span> dump.length <span class="keyword">isnt</span> <span class="number">0</span> <span class="comment"># Chop up dump.</span>
+            len = <span class="keyword">if</span> dump.length &gt; <span class="number">16368</span> <span class="keyword">then</span> <span class="number">16368</span> <span class="keyword">else</span> dump.length
+            chunk = <span class="keyword">new</span> Buffer len
+            dump.copy chunk
+            dump = dump.slice len
+            
+            hash = crypto.createHash <span class="string">'sha256'</span> <span class="comment"># Calculate IV.</span>
+            hash.end chunk
+            tag = hash.read()
+            
+            temp = crypto.createCipher <span class="string">'aes-256-ctr'</span>, <span class="property">@key1</span>
+            temp.end tag
+            iv = temp.read().slice <span class="number">0</span>, <span class="number">16</span>
+            
+            cipher = crypto.createCipheriv <span class="string">'aes-256-ctr'</span>, <span class="property">@key2</span>, iv <span class="comment"># Encrypt.</span>
+            cipher.end chunk
+            end = Buffer.concat [iv, cipher.read()]
+            more = <span class="property">@push</span> end
+            <span class="keyword">if</span> <span class="keyword">not</span> more <span class="keyword">then</span> <span class="keyword">return</span> done()
+        
+        done()
+    
+    _flush: (done) -&gt;
+        <span class="property">@push</span> <span class="keyword">if</span> <span class="property">@leftover</span>.length <span class="keyword">is</span> <span class="number">0</span> <span class="keyword">then</span> <span class="literal">null</span> <span class="keyword">else</span> <span class="property">@leftover</span>
+        <span class="property">@leftover</span> = <span class="keyword">new</span> Buffer <span class="number">0</span>
+        done()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>An implementation of Synthetic IV decryption.  See above.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">exports</span>.<span class="title">SIVDecrypter</span> <span class="keyword">extends</span> <span class="title">stream</span>.<span class="title">Transform</span></span>
+    constructor: (<span class="property">@key1</span>, <span class="property">@key2</span>) -&gt;
+        <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">this</span> <span class="keyword">instanceof</span> exports.SIVDecrypter
+            <span class="keyword">return</span> <span class="keyword">new</span> exports.SIVDecrypter <span class="property">@key1</span>, <span class="property">@key2</span>
+        
+        stream.Transform.call <span class="keyword">this</span>, decodeStrings: <span class="literal">true</span>
+    
+    _transform: (chunk, encoding, done) -&gt;
+        iv = chunk.slice <span class="number">0</span>, <span class="number">16</span>
+        data = chunk.slice <span class="number">16</span>
+        
+        decipher = crypto.createDecipheriv <span class="string">'aes-256-ctr'</span>, <span class="property">@key2</span>, iv <span class="comment"># Decrypt</span>
+        decipher.end data
+        pt = decipher.read()
+        
+        hash = crypto.createHash <span class="string">'sha256'</span> <span class="comment"># Authenticate by calculating IV</span>
+        hash.end pt
+        tag = hash.read()
+        
+        temp = crypto.createCipher <span class="string">'aes-256-ctr'</span>, <span class="property">@key1</span>
+        temp.end tag
+        ivCand = temp.read().slice <span class="number">0</span>, <span class="number">16</span>
+        
+        <span class="keyword">if</span> iv.toString(<span class="string">'base64'</span>) <span class="keyword">isnt</span> ivCand.toString(<span class="string">'base64'</span>)
+            <span class="keyword">return</span> done <span class="string">'Failed auth.'</span>
+        
+        <span class="property">@push</span> pt
+        done()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>An implementation of XTS encryption.  XTS is size-preserving encryption used
+for randomly accessible data, like RAM or hard disks, which are split 
+into sectors of fixed size.  Because size must be preserved, no authentication
+can be used, meaning any ciphertext can be altered by an attacker and will 
+still decrypt.</p>
+<ol>
+<li><code>key</code> - Randomly generated symmetric key, usually through 
+<code>caesar.key.createRandom()</code>.</li>
+<li><code>cut</code> - The size in bytes of each sector.  If the size of the plaintext is 
+not divisible by the cut then 0x00s are appended.</li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">exports</span>.<span class="title">XTSEncrypter</span> <span class="keyword">extends</span> <span class="title">stream</span>.<span class="title">Transform</span></span>
+    constructor: (<span class="property">@key</span>, <span class="property">@cut</span> = <span class="number">32</span>) -&gt;
+        <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">this</span> <span class="keyword">instanceof</span> exports.XTSEncrypter
+            <span class="keyword">return</span> <span class="keyword">new</span> exports.XTSEncrypter <span class="property">@key</span>, <span class="property">@cut</span>
+        
+        stream.Transform.call <span class="keyword">this</span>, decodeStrings: <span class="literal">true</span>
+        <span class="property">@cipher</span> = crypto.createCipher <span class="string">'aes-256-xts'</span>, <span class="property">@key</span>
+    
+    _transform: (dump, encoding, done) -&gt;
+        <span class="keyword">while</span> dump.length <span class="keyword">isnt</span> <span class="number">0</span> <span class="comment"># Chop up dump.</span>
+            chunk = <span class="keyword">new</span> Buffer <span class="property">@cut</span>
+            dump.copy chunk
+            dump = dump.slice <span class="property">@cut</span>
+            
+            <span class="property">@cipher</span>.write chunk
+            <span class="property">@push</span> <span class="property">@cipher</span>.read()
+        
+        done()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>An implementation of XTS decryption.  See above.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">exports</span>.<span class="title">XTSDecrypter</span> <span class="keyword">extends</span> <span class="title">stream</span>.<span class="title">Transform</span></span>
+    constructor: (<span class="property">@key</span>, <span class="property">@cut</span> = <span class="number">32</span>) -&gt;
+        <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">this</span> <span class="keyword">instanceof</span> exports.XTSDecrypter
+            <span class="keyword">return</span> <span class="keyword">new</span> exports.XTSDecrypter <span class="property">@key</span>
+        
+        stream.Transform.call <span class="keyword">this</span>, decodeStrings: <span class="literal">true</span>
+        <span class="property">@decipher</span> = crypto.createDecipher <span class="string">'aes-256-xts'</span>, <span class="property">@key</span>
+    
+    _transform: (dump, encoding, done) -&gt;
+        <span class="keyword">while</span> dump.length <span class="keyword">isnt</span> <span class="number">0</span> <span class="comment"># Chop up dump.</span>
+            chunk = <span class="keyword">new</span> Buffer <span class="property">@cut</span>
+            dump.copy chunk
+            dump = dump.slice <span class="property">@cut</span>
+            
+            <span class="property">@decipher</span>.write chunk
+            <span class="property">@push</span> <span class="property">@decipher</span>.read()
+        
+        done()</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

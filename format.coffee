@@ -1,22 +1,32 @@
 stream = require 'stream'
 
+# A simple transform stream to add a newline onto the end of each packet.  This
+# is not binary safe.
+#
+# 1. `opts` are any options you want passed to the underlying readable and 
+#    writeable streams.  Best left alone.
 class exports.EncodeByLine extends stream.Transform
     constructor: (opts) ->
         if not this instanceof exports.EncodeByLine
-            return new exports.DecodeByLine opts
+            return new exports.EncodeByLine opts
         
-        stream.Transform.call this
+        stream.Transform.call this, opts
     
     _transform: (chunk, encoding, done) ->
         @push chunk + "\n"
         done()
 
+# A simple transform stream to split data by its newlines.  This is not binary 
+# safe.
+#
+# 1. `opts` are any options you want passed to the underlying readable and 
+#    writeable streams.  Best left alone.
 class exports.DecodeByLine extends stream.Transform
     constructor: (opts) ->
         if not this instanceof exports.DecodeByLine
             return new exports.DecodeByLine opts
         
-        stream.Transform.call this
+        stream.Transform.call this, opts
         @_lastLine = ""
     
     _transform: (chunk, encoding, done) ->
@@ -33,12 +43,16 @@ class exports.DecodeByLine extends stream.Transform
         @_lastLine = ""
         done()
 
+# Prepends the data's length to each packet in a short.  This is binary safe.
+#
+# 1. `opts` are any options you want passed to the underlying readable and 
+#    writeable streams.  Best left alone.
 class exports.EncodeByLength extends stream.Transform
     constructor: (opts) ->
         if not this instanceof exports.EncodeByLength
             return new exports.EncodeByLength opts
         
-        stream.Transform.call this
+        stream.Transform.call this, opts
     
     _transform: (chunk, encoding, done) ->
         buff = new Buffer chunk.length + 2
@@ -50,12 +64,17 @@ class exports.EncodeByLength extends stream.Transform
         @push buff
         done()
 
+# Waits until an indicated number of bytes have been written before returning 
+# the data (without the short).  This is binary safe.
+#
+# 1. `opts` are any options you want passed to the underlying readable and 
+#    writeable streams.  Best left alone.
 class exports.DecodeByLength extends stream.Transform
     constructor: (opts) ->
         if not this instanceof exports.DecodeByLength
             return new exports.DecodeByLength opts
         
-        stream.Transform.call this
+        stream.Transform.call this, opts
         @_buffer = new Buffer ''
     
     _transform: (chunk, encoding, done) ->

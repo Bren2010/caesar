@@ -10,7 +10,7 @@ salt = 'lK4qA0RY8TRMq8duxRup'
 # 1. `bytes` is the size of the key to create.  *(Number)*
 # 2. `cb(err, key)` is optional and will make the operation asynchronous.
 #    *(Function)*
-exports.createRandom = (bytes = 32, cb) -> crypto.randomBytes bytes, cb
+exports.createRandom = (bytes = 48, cb) -> crypto.randomBytes bytes, cb
 
 # Create a random RSA private key, from which the public key can be derived.
 #

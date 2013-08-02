@@ -1,7 +1,10 @@
 crypto = require 'crypto'
 ursa = require 'ursa'
+msgpack = require 'msgpack'
 stream = require 'stream'
 keyLib = require './key'
+
+Buffer.prototype.toArray = -> Array.prototype.slice.call this, 0
 
 # Standard and recommended class for encrypting and authenticating stream-like
 # data.
@@ -71,7 +74,7 @@ class exports.Encrypter extends stream.Transform
             if @integrous is 'sym' # Calculate HMAC.
                 mac = crypto.createHmac 'sha512', key
                 mac.end data
-                footer.mac = mac.read().toString 'base64'
+                footer.mac = mac.read().toArray()
             
             if @integrous is 'asym' # Calculate signature.
                 sigs = {}
@@ -79,19 +82,19 @@ class exports.Encrypter extends stream.Transform
                 sigs[k] = ursa.createSigner 'sha512' for k of @keys.private
                 sigs[k].update data for k of @keys.private
                 footer.sigs[k] = sigs[k].sign v for k, v of @keys.private
-                footer.sigs[k] = v.toString 'base64' for k, v of footer.sigs
+                footer.sigs[k] = v.toArray() for k, v of footer.sigs
             
             if @keys.public? # Calculate keyring.
                 footer.keys = if @keys.public instanceof Array then [] else {}
                 footer.keys[k] = v.encrypt key for k, v of @keys.public
-                footer.keys[k] = v.toString 'base64' for k, v of footer.keys
+                footer.keys[k] = v.toArray() for k, v of footer.keys
             
-            footer = JSON.stringify footer
+            footer = msgpack.pack footer
             out = new Buffer 4 + data.length + footer.length
             out.writeUInt16BE data.length, 0
             data.copy out, 2, 0, data.length
             out.writeUInt16BE footer.length, data.length + 2
-            out.write footer, data.length + 4
+            footer.copy out, data.length + 4, 0, footer.length
             
             more = @push out
             if not more then return done()
@@ -148,7 +151,7 @@ class exports.Decrypter extends stream.Transform
         data = chunk.slice 2, 2 + dlen
         
         flen = chunk.readUInt16BE 2 + dlen
-        footer = JSON.parse chunk.slice 4 + dlen
+        footer = msgpack.unpack chunk.slice 4 + dlen
         
         if not data? then return done 'No payload.'
         if not footer.mac? and @integrous is 'sym' then return done 'No MAC.'
@@ -165,7 +168,7 @@ class exports.Decrypter extends stream.Transform
             if footer.keys instanceof Array
                 for tag in footer.keys
                     for n, privKey of @keys.private
-                        try key = privKey.decrypt tag, 'base64'
+                        try key = privKey.decrypt tag
                         catch err then key = null
                         
                         if key? then break
@@ -177,7 +180,7 @@ class exports.Decrypter extends stream.Transform
                     return done 'No valid keys for decryption.'
                 
                 for k in keys
-                    try key = @keys.private[k].decrypt footer.keys[k], 'base64'
+                    try key = @keys.private[k].decrypt new Buffer footer.keys[k]
                     catch err then key = null
                     
                     if key? then break
@@ -189,7 +192,7 @@ class exports.Decrypter extends stream.Transform
         
         if @integrous is 'sym' # Verify an HMAC.
             mac = crypto.createHmac 'sha512', key
-            mac.end footer.mac, 'base64'
+            mac.end new Buffer footer.mac
             candidateTag = mac.read().toString 'base64'
             
             mac = crypto.createHmac 'sha512', key
@@ -206,6 +209,7 @@ class exports.Decrypter extends stream.Transform
             ok = false
             if footer.sigs instanceof Array
                 for sig in footer.sigs
+                    sig = new Buffer sig
                     for pubKey in @keys.public
                         v = ursa.createVerifier 'sha512'
                         v.update data
@@ -221,7 +225,7 @@ class exports.Decrypter extends stream.Transform
                     try
                         v = ursa.createVerifier 'sha512'
                         v.update data
-                        ok = v.verify @keys.public[k], footer.sigs[k], 'base64'
+                        ok = v.verify @keys.public[k], new Buffer footer.sigs[k]
                         if ok then break
                     catch e
             

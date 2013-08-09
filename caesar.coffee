@@ -2,6 +2,7 @@ exports.format = require './format'
 exports.key = require './key'
 exports.hash = require './hash'
 exports.message = require './message'
+exports.searchable = require './searchable'
 
 # Setup some aliases that indicate/encourage common use-cases.
 exports.StreamEncrypter = exports.message.Encrypter # Stream data, like sockets.

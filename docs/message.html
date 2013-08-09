@@ -29,6 +29,11 @@
               </a>
             
               
+              <a class="source" href="hash.html">
+                hash.coffee
+              </a>
+            
+              
               <a class="source" href="key.html">
                 key.coffee
               </a>
@@ -36,6 +41,11 @@
               
               <a class="source" href="message.html">
                 message.coffee
+              </a>
+            
+              
+              <a class="source" href="searchable.html">
+                searchable.coffee
               </a>
             
           </div>
@@ -63,8 +73,11 @@
             
             <div class="content"><div class='highlight'><pre>crypto = require <span class="string">'crypto'</span>
 ursa = require <span class="string">'ursa'</span>
+msgpack = require <span class="string">'msgpack'</span>
 stream = require <span class="string">'stream'</span>
-keyLib = require <span class="string">'./key'</span></pre></div></div>
+keyLib = require <span class="string">'./key'</span>
+
+Buffer.prototype.<span class="function"><span class="title">toArray</span></span> = -&gt; Array.prototype.slice.call <span class="keyword">this</span>, <span class="number">0</span></pre></div></div>
             
         </li>
         
@@ -149,7 +162,7 @@ If you get strange errors, try lowering this below the default.  <em>(Number)</e
             <span class="keyword">if</span> <span class="property">@integrous</span> <span class="keyword">is</span> <span class="string">'sym'</span> <span class="comment"># Calculate HMAC.</span>
                 mac = crypto.createHmac <span class="string">'sha512'</span>, key
                 mac.end data
-                footer.mac = mac.read().toString <span class="string">'base64'</span>
+                footer.mac = mac.read().toArray()
             
             <span class="keyword">if</span> <span class="property">@integrous</span> <span class="keyword">is</span> <span class="string">'asym'</span> <span class="comment"># Calculate signature.</span>
                 sigs = {}
@@ -157,19 +170,19 @@ If you get strange errors, try lowering this below the default.  <em>(Number)</e
                 sigs[k] = ursa.createSigner <span class="string">'sha512'</span> <span class="keyword">for</span> k <span class="keyword">of</span> <span class="property">@keys</span>.private
                 sigs[k].update data <span class="keyword">for</span> k <span class="keyword">of</span> <span class="property">@keys</span>.private
                 footer.sigs[k] = sigs[k].sign v <span class="keyword">for</span> k, v <span class="keyword">of</span> <span class="property">@keys</span>.private
-                footer.sigs[k] = v.toString <span class="string">'base64'</span> <span class="keyword">for</span> k, v <span class="keyword">of</span> footer.sigs
+                footer.sigs[k] = v.toArray() <span class="keyword">for</span> k, v <span class="keyword">of</span> footer.sigs
             
             <span class="keyword">if</span> <span class="property">@keys</span>.public? <span class="comment"># Calculate keyring.</span>
                 footer.keys = <span class="keyword">if</span> <span class="property">@keys</span>.public <span class="keyword">instanceof</span> Array <span class="keyword">then</span> [] <span class="keyword">else</span> {}
                 footer.keys[k] = v.encrypt key <span class="keyword">for</span> k, v <span class="keyword">of</span> <span class="property">@keys</span>.public
-                footer.keys[k] = v.toString <span class="string">'base64'</span> <span class="keyword">for</span> k, v <span class="keyword">of</span> footer.keys
+                footer.keys[k] = v.toArray() <span class="keyword">for</span> k, v <span class="keyword">of</span> footer.keys
             
-            footer = JSON.stringify footer
+            footer = msgpack.pack footer
             out = <span class="keyword">new</span> Buffer <span class="number">4</span> + data.length + footer.length
             out.writeUInt16BE data.length, <span class="number">0</span>
             data.copy out, <span class="number">2</span>, <span class="number">0</span>, data.length
             out.writeUInt16BE footer.length, data.length + <span class="number">2</span>
-            out.write footer, data.length + <span class="number">4</span>
+            footer.copy out, data.length + <span class="number">4</span>, <span class="number">0</span>, footer.length
             
             more = <span class="property">@push</span> out
             <span class="keyword">if</span> <span class="keyword">not</span> more <span class="keyword">then</span> <span class="keyword">return</span> done()
@@ -240,7 +253,7 @@ Must match the Encrypter&#39;s value.  <em>(String)</em></li>
         data = chunk.slice <span class="number">2</span>, <span class="number">2</span> + dlen
         
         flen = chunk.readUInt16BE <span class="number">2</span> + dlen
-        footer = JSON.parse chunk.slice <span class="number">4</span> + dlen
+        footer = msgpack.unpack chunk.slice <span class="number">4</span> + dlen
         
         <span class="keyword">if</span> <span class="keyword">not</span> data? <span class="keyword">then</span> <span class="keyword">return</span> done <span class="string">'No payload.'</span>
         <span class="keyword">if</span> <span class="keyword">not</span> footer.mac? <span class="keyword">and</span> <span class="property">@integrous</span> <span class="keyword">is</span> <span class="string">'sym'</span> <span class="keyword">then</span> <span class="keyword">return</span> done <span class="string">'No MAC.'</span>
@@ -257,7 +270,7 @@ Must match the Encrypter&#39;s value.  <em>(String)</em></li>
             <span class="keyword">if</span> footer.keys <span class="keyword">instanceof</span> Array
                 <span class="keyword">for</span> tag <span class="keyword">in</span> footer.keys
                     <span class="keyword">for</span> n, privKey <span class="keyword">of</span> <span class="property">@keys</span>.private
-                        <span class="keyword">try</span> key = privKey.decrypt tag, <span class="string">'base64'</span>
+                        <span class="keyword">try</span> key = privKey.decrypt tag
                         <span class="keyword">catch</span> err <span class="keyword">then</span> key = <span class="literal">null</span>
                         
                         <span class="keyword">if</span> key? <span class="keyword">then</span> <span class="keyword">break</span>
@@ -269,7 +282,7 @@ Must match the Encrypter&#39;s value.  <em>(String)</em></li>
                     <span class="keyword">return</span> done <span class="string">'No valid keys for decryption.'</span>
                 
                 <span class="keyword">for</span> k <span class="keyword">in</span> keys
-                    <span class="keyword">try</span> key = <span class="property">@keys</span>.private[k].decrypt footer.keys[k], <span class="string">'base64'</span>
+                    <span class="keyword">try</span> key = <span class="property">@keys</span>.private[k].decrypt <span class="keyword">new</span> Buffer footer.keys[k]
                     <span class="keyword">catch</span> err <span class="keyword">then</span> key = <span class="literal">null</span>
                     
                     <span class="keyword">if</span> key? <span class="keyword">then</span> <span class="keyword">break</span>
@@ -281,7 +294,7 @@ Must match the Encrypter&#39;s value.  <em>(String)</em></li>
         
         <span class="keyword">if</span> <span class="property">@integrous</span> <span class="keyword">is</span> <span class="string">'sym'</span> <span class="comment"># Verify an HMAC.</span>
             mac = crypto.createHmac <span class="string">'sha512'</span>, key
-            mac.end footer.mac, <span class="string">'base64'</span>
+            mac.end <span class="keyword">new</span> Buffer footer.mac
             candidateTag = mac.read().toString <span class="string">'base64'</span>
             
             mac = crypto.createHmac <span class="string">'sha512'</span>, key
@@ -298,6 +311,7 @@ Must match the Encrypter&#39;s value.  <em>(String)</em></li>
             ok = <span class="literal">false</span>
             <span class="keyword">if</span> footer.sigs <span class="keyword">instanceof</span> Array
                 <span class="keyword">for</span> sig <span class="keyword">in</span> footer.sigs
+                    sig = <span class="keyword">new</span> Buffer sig
                     <span class="keyword">for</span> pubKey <span class="keyword">in</span> <span class="property">@keys</span>.public
                         v = ursa.createVerifier <span class="string">'sha512'</span>
                         v.update data
@@ -313,7 +327,7 @@ Must match the Encrypter&#39;s value.  <em>(String)</em></li>
                     <span class="keyword">try</span>
                         v = ursa.createVerifier <span class="string">'sha512'</span>
                         v.update data
-                        ok = v.verify <span class="property">@keys</span>.public[k], footer.sigs[k], <span class="string">'base64'</span>
+                        ok = v.verify <span class="property">@keys</span>.public[k], <span class="keyword">new</span> Buffer footer.sigs[k]
                         <span class="keyword">if</span> ok <span class="keyword">then</span> <span class="keyword">break</span>
                     <span class="keyword">catch</span> e
             

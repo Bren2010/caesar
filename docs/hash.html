@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>caesar.coffee</title>
+  <title>hash.coffee</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="docco.css" />
@@ -56,7 +56,7 @@
         
           <li id="title">
               <div class="annotation">
-                  <h1>caesar.coffee</h1>
+                  <h1>hash.coffee</h1>
               </div>
           </li>
         
@@ -71,11 +71,7 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre>exports.format = require <span class="string">'./format'</span>
-exports.key = require <span class="string">'./key'</span>
-exports.hash = require <span class="string">'./hash'</span>
-exports.message = require <span class="string">'./message'</span>
-exports.searchable = require <span class="string">'./searchable'</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>crypto = require <span class="string">'crypto'</span></pre></div></div>
             
         </li>
         
@@ -86,15 +82,24 @@ exports.searchable = require <span class="string">'./searchable'</span></pre></d
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>Setup some aliases that indicate/encourage common use-cases.</p>
+              <p>Generates a hash chain (or just a hash).</p>
+<ol>
+<li><code>value</code> is the data that will be hashed. <em>(String||Buffer)</em></li>
+<li><code>n</code> is the number of times to compute the hash. <em>(Number)</em></li>
+<li><code>alg</code> is the algorithm to use. <em>(String)</em></li>
+</ol>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>exports.StreamEncrypter = exports.message.Encrypter <span class="comment"># Stream data, like sockets.</span>
-exports.StreamDecrypter = exports.message.Decrypter
-
-exports.DiskEncrypter = exports.message.XTSEncrypter <span class="comment"># Files or chunked data.</span>
-exports.DiskDecrypter = exports.message.XTSDecrypter</pre></div></div>
+            <div class="content"><div class='highlight'><pre>exports.<span class="function"><span class="title">chain</span></span> = (value, n = <span class="number">1</span>, alg = <span class="string">'sha512'</span>) -&gt;
+    <span class="function"><span class="title">sum</span></span> = (val) -&gt;
+        hash = crypto.createHash <span class="string">'sha512'</span>
+        hash.end val
+        hash.read()
+    
+    [n, value] = [n - <span class="number">1</span>, sum value] <span class="keyword">until</span> n <span class="keyword">is</span> <span class="number">0</span>
+    
+    value</pre></div></div>
             
         </li>
         

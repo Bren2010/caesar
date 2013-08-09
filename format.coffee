@@ -38,7 +38,6 @@ class exports.DecodeByLine extends stream.Transform
         done()
     
     _flush: (done) ->
-        console.log @_lastLine
         if @_lastLine.length isnt 0 then @push @_lastLine
         @_lastLine = ""
         done()

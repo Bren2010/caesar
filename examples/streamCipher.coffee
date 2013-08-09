@@ -13,8 +13,8 @@ decrypter = new caesar.message.Decrypter keys, true, "sym"
 # Asymmetric:
 # In practice, the pubilc key should be extracted from this and distributed, 
 # and the private key should be kept... private.
-alice = new caesar.key.createPrivate()
-bob = new caesar.key.createPrivate()
+alice = caesar.key.createPrivate()
+bob = caesar.key.createPrivate()
 
 alicesKeys = public: {bob: bob}, private: {alice: alice}
 bobsKeys = public: {alice: alice}, private: {bob: bob}

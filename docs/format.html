@@ -29,6 +29,11 @@
               </a>
             
               
+              <a class="source" href="hash.html">
+                hash.coffee
+              </a>
+            
+              
               <a class="source" href="key.html">
                 key.coffee
               </a>
@@ -36,6 +41,11 @@
               
               <a class="source" href="message.html">
                 message.coffee
+              </a>
+            
+              
+              <a class="source" href="searchable.html">
+                searchable.coffee
               </a>
             
           </div>
@@ -127,7 +137,6 @@ writeable streams.  Best left alone.</li>
         done()
     
     _flush: (done) -&gt;
-        console.log <span class="property">@_lastLine</span>
         <span class="keyword">if</span> <span class="property">@_lastLine</span>.length <span class="keyword">isnt</span> <span class="number">0</span> <span class="keyword">then</span> <span class="property">@push</span> <span class="property">@_lastLine</span>
         <span class="property">@_lastLine</span> = <span class="string">""</span>
         done()</pre></div></div>

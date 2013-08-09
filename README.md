@@ -7,6 +7,11 @@ An easy-to-use advanced cryptography library that lets you focus on writing appl
 npm install caesar
 ```
 
+### Currently Implemented
+1. Stream Ciphers (Confidential and/or Authenticated)
+2. Deterministic Authenticated Encryption (SIV-CTR)
+3. Disk Encryption (XTS)
+4. Searchable Symmetric Encryption
 
 ## Where I Ramble for a Bit
 
@@ -14,4 +19,4 @@ A lot of security officials will tell web developers that if they need to type t
 
 My goal in writing this library is to provide simple and easy-to-use interfaces to advanced cryptographic tools in such a way that someone with no prior knowledge of them can correctly integrate them in their own applications with as little effort as possible.  That way they can focus on what they love (developing) and I can focus on what I love (cryptography).
 
-Currently only a few kinds of encryption and authentication are supported, however more complex tools will be added as time goes on.  Some things that might be added in the future include:  user authentication, more complex key exchanges, zero-knowledge proofs, and homomorphic encryption schemes.
+Some things that might be added in the future include:  user authentication, more complex key exchanges, zero-knowledge proofs, and homomorphic encryption schemes.

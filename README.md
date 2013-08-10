@@ -20,3 +20,5 @@ A lot of security officials will tell web developers that if they need to type t
 My goal in writing this library is to provide simple and easy-to-use interfaces to advanced cryptographic tools in such a way that someone with no prior knowledge of them can correctly integrate them in their own applications with as little effort as possible.  That way they can focus on what they love (developing) and I can focus on what I love (cryptography).
 
 Some things that might be added in the future include:  user authentication, more complex key exchanges, zero-knowledge proofs, and homomorphic encryption schemes.
+
+I've tried to keep all of the code very well documented and write examples that concisely demonstrate proper use of the library.  If you encounter any problems or confusion while using the library, please [open an issue](https://github.com/Bren2010/caesar/issues) or [send me an email](https://github.com/Bren2010).

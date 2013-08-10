@@ -70,10 +70,8 @@ listener = http.createServer (req, res) ->
                 res.write id + '\n' for id in out
                 res.end()
         
-        # A way for the client to fetch encrypted indices that they've stored.
-        when "index"
-            res.writeHead 200, 'Content-Type': 'text/plain'
-            res.end JSON.stringofy server.index[req.url[1]]
+        # Never let the user download an index that they uploaded earlier!  They
+        # don't need it anyways.
         
         # A way for the client to fetch encrypted documents that they've stored.
         when "document"

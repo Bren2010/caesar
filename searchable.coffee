@@ -1,5 +1,6 @@
 crypto = require 'crypto'
 stream = require 'stream'
+message = require './message'
 
 # Largely a passthrough stream.  It won't change the data, but it will do some 
 # trivial index generation and keep track of the size of the data passed to it.
@@ -41,7 +42,11 @@ class exports.Indexer extends stream.Transform
         done()
 
 
-# Utility class for a secure search server.
+# Utility class for a secure single-user search server.
+# **Note:**  The server utility doesn't offer any user authentication.
+#     Authenticating file/index uploads is strongly recommended (for the obvious
+#     reason), but will have to be done by the developer.  Searches and
+#     and downloads do not require authentication, but it doesn't hurt.
 #
 # 1. `index` is the secure index to initialize the server.  Use {} if none.  To
 #    persist the secure index, before the application is shut down access
@@ -86,7 +91,50 @@ class exports.Server
         true
 
 
-# Utility class for a secure search client.
+# Utility class for a secure multi-user search server.
+#
+# **Note:**  Same recommendations on authentication as above.  However, the
+#     server's state *is* authenticated, and will throw an error if auth fails.
+#
+# **Note:**  This utility doesn't provide anywhere to store things like packed
+#     keys, even though providing such a place is recommended.  It should be
+#     observed that even though the server isn't allowed to decrypt packed keys
+#     and the like, they are signed by document owners and can be verified by
+#     the server nevertheless.
+#
+# 1. `state` is the state provided by the client.  *(Buffer)*
+# 2. `index` is the secure index to initialize the server...  *(See above.)*
+# 3. `keychain` follows the same format as `caesar.message.Encrypter.keys`.  The
+#    server's private key should be in the `private` section of the object
+#    (under the name `server`).  The public key(s) of the document 
+#    owner(s) should be in the `public` section.  *(Object)*
+class exports.MultiUserServer extends exports.Server
+    constructor: (state, @index, @keychain) ->
+        if not this instanceof exports.MultiUserServer
+            return new exports.MultiUserServer state, @index, @keychain
+        
+        if state isnt null then @state state
+    
+    # Sets the state of the server.
+    #
+    # 1. `state` is the provided state.  *(Buffer)*
+    state: (state) ->
+        decrypter = new message.Decrypter @keychain, true, 'asym'
+        decrypter.write state
+        @stateKey = decrypter.read()
+    
+    # *(See above.)*
+    search: (query) ->
+        for domain, trpdrs of query # Decrypt query.
+            for i, trpdr of trpdrs
+                decipher = crypto.createDecipher 'aes-256-ctr', @stateKey
+                decipher.write trpdr, 'base64'
+                query[domain][i] = decipher.read().toString 'base64'
+        
+        super query
+
+
+# Utility class for a secure single-user search client.
 #
 # 1. `keys` is the keyring used to maintain the secure index.  Use {} if none.
 #    To persist the key ring, before the application is shut down access
@@ -240,3 +288,77 @@ class exports.Client
         
         docs: docs, index: rsindex
 
+
+# Utility class for a secure multi-user search client.
+#
+# 1. `keys` is the keyring used to maintain the secure index.  *(See above.)*
+# 2. `keychain` follows the same format as `caesar.message.Encrypter.keys`.  The
+#    current user's private key should be in the `private` section of this
+#    object.  The document owner(s) should have their own, the server's, and all
+#    authenticated users' public keys in the `public` section.  Other users only
+#    need to have the document owner(s)' public key(s) in the `public` section.
+#    *(Object)*
+class exports.MultiUserClient extends exports.Client
+    constructor: (@keys, @keychain = {}) ->
+        if not this instanceof exports.MultiUserClient
+            return new exports.MultiUserClient @keys, @keychain
+    
+    # Calculates a state for the server.  Only document owners can call this
+    # function.  This function's output authenticates user queries on the
+    # server, and should be used to add/revoke user access by adding/removing
+    # them from your keychain.
+    state: ->
+        key = crypto.randomBytes 32
+        encrypter = new message.Encrypter @keychain, true, 'asym'
+        encrypter.write key
+        
+        encrypter.read()
+    
+    # Packs the keys used to manage the secure index so that they can be posted
+    # publicly and unpacked by other authorized users.  Only document owners can
+    # call this function.
+    packKeys: ->
+        out = {}
+        
+        server = @keychain.server
+        delete @keychain.server
+        
+        encrypter = new message.Encrypter @keychain, true, 'asym'
+        encrypter.write new Buffer JSON.stringify @keys
+        
+        @keychain.server = server
+        encrypter.read()
+    
+    # Unpacks the keys used to manage the secure index.  Any user can call this
+    # function.
+    #
+    # 1. `packed` is the encrypted keychain to unpack.  *(Buffer)*
+    unpackKeys: (packed) ->
+        server = @keychain.server
+        delete @keychain.server
+        
+        decrypter = new message.Decrypter @keychain, true, 'asym'
+        decrypter.write packed
+        out = JSON.parse decrypter.read()
+        
+        @keys[dn] = [key[0], new Buffer(key[1])] for dn, key of out
+        @keychain.server = server
+    
+    # Creates a secure query on a given word.  Any user can call this function.
+    #
+    # 1. `state` is the current server state.  *(Buffer)*
+    # 2. `word` the word to generate the query on... *(See above.)*
+    createQuery: (state, word) ->
+        decrypter = new message.Decrypter @keychain, true, 'asym'
+        decrypter.write state
+        key = decrypter.read() # Decrypt state to get the key.
+        
+        query = super word
+        
+        for domain, trpdrs of query # Encrypt query.
+            for i, trpdr of trpdrs
+                cipher = crypto.createCipher 'aes-256-ctr', key
+                cipher.write trpdr, 'base64'
+                query[domain][i] = cipher.read().toString 'base64'
+        
+        query

@@ -11,7 +11,7 @@ npm install caesar
 1. Stream Ciphers (Confidential and/or Authenticated)
 2. Deterministic Authenticated Encryption (SIV-CTR)
 3. Disk Encryption (XTS)
-4. Searchable Symmetric Encryption
+4. Searchable Symmetric Encryption (Single-User and Multi-User)
 
 ## Where I Ramble for a Bit
 

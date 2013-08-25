@@ -2,15 +2,18 @@
     "name": "caesar",
     "author": "Brendan Mc.",
     "description": "An easy-to-use advanced cryptography library.",
-    "keywords": ["easy", "simple", "advanced", "crypto", "cryptography", "encryption", "decryption", "rsa", "siv", "xts"],
+    "keywords": ["encryption", "decryption", "searchable", "deterministic", "authenticated", "commitments", "rsa", "siv", "xts", "opse", "sse", "rsse"],
     "bugs": "https://github.com/Bren2010/caesar/issues",
     "repository": {
         "type": "git", 
         "url": "https://github.com/Bren2010/caesar"
     },
-    "version": "1.0.2",
+    "version": "1.0.3",
     "main": "caesar.js",
     "dependencies": {
-        "ursa": "*"
+        "ursa": "*",
+        "msgpack": "*",
+        "bigdecimal": "*"
     }
 }
+

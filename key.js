@@ -12,7 +12,7 @@
 
   exports.createRandom = function(bytes, cb) {
     if (bytes == null) {
-      bytes = 32;
+      bytes = 48;
     }
     return crypto.randomBytes(bytes, cb);
   };

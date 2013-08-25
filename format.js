@@ -49,7 +49,6 @@
     };
 
     DecodeByLine.prototype._flush = function(done) {
-      console.log(this._lastLine);
       if (this._lastLine.length !== 0) {
         this.push(this._lastLine);
       }

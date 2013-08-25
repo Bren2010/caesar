@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>searchable.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="caesar.html">
+                caesar.coffee
+              </a>
+            
+              
+              <a class="source" href="commitment.html">
+                commitment.coffee
+              </a>
+            
+              
+              <a class="source" href="format.html">
+                format.coffee
+              </a>
+            
+              
+              <a class="source" href="hash.html">
+                hash.coffee
+              </a>
+            
+              
+              <a class="source" href="key.html">
+                key.coffee
+              </a>
+            
+              
+              <a class="source" href="message.html">
+                message.coffee
+              </a>
+            
+              
+              <a class="source" href="opse.html">
+                opse.coffee
+              </a>
+            
+              
+              <a class="source" href="searchable.html">
+                searchable.coffee
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>searchable.coffee</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>crypto = require <span class="string">'crypto'</span>
+stream = require <span class="string">'stream'</span>
+message = require <span class="string">'./message'</span>
+opse = require <span class="string">'./opse'</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Largely a passthrough stream.  It won&#39;t change the data, but it will do some 
+trivial index generation and keep track of the size of the data passed to it.
+Access Indexer.index to get the properly formed index for the given data, and
+Indexer.size for the size in bytes of the given data.</p>
+<ol>
+<li><code>id</code> is the id of the document being indexed.  Document ids should have no
+publicly discernable relationship to the document.  Random ids are
+recommended (but not required).  Auto generated ids like from Twitter&#39;s 
+Snowflake or RethinkDB are fine to use.  <em>(Object)</em></li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">exports</span>.<span class="title">Indexer</span> <span class="keyword">extends</span> <span class="title">stream</span>.<span class="title">Transform</span></span>
+    constructor: (<span class="property">@id</span>) -&gt;
+        <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">this</span> <span class="keyword">instanceof</span> exports.Indexer
+            <span class="keyword">return</span> <span class="keyword">new</span> exports.Indexer <span class="property">@id</span>
+        
+        stream.Transform.call <span class="keyword">this</span>, decodeStrings: <span class="literal">true</span>
+        [<span class="property">@index</span>, <span class="property">@leftover</span>, <span class="property">@size</span>] = [{id: <span class="property">@id</span>, list: {}}, <span class="string">''</span>, <span class="number">0</span>]
+    
+    _clean: (word) -&gt; word.toLowerCase().replace <span class="regexp">/[^a-z0-9]/g</span>, <span class="string">''</span>
+    _push: (data) -&gt;
+        data[i] = <span class="property">@_clean</span> word <span class="keyword">for</span> i, word <span class="keyword">of</span> data
+        <span class="keyword">for</span> word <span class="keyword">in</span> data
+            <span class="keyword">if</span> <span class="property">@index</span>.list[word]? <span class="keyword">then</span> ++<span class="property">@index</span>.list[word]
+            <span class="keyword">else</span> <span class="property">@index</span>.list[word] = <span class="number">1</span>
+        
+        <span class="keyword">delete</span> <span class="property">@index</span>[<span class="string">''</span>]
+    
+    _transform: (chunk, encoding, done) -&gt;
+        data = (<span class="property">@leftover</span> + chunk.toString()).split <span class="regexp">/[\s]/g</span>
+        <span class="property">@leftover</span> = data.splice(data.length - <span class="number">1</span>, <span class="number">1</span>)?[<span class="number">0</span>]
+        <span class="property">@_push</span> data
+        <span class="property">@size</span> += chunk.length
+        
+        <span class="property">@push</span> chunk
+        done()
+    
+    _flush: (done) -&gt;
+        <span class="keyword">if</span> <span class="property">@leftover</span>.length <span class="keyword">is</span> <span class="number">0</span> <span class="keyword">then</span> <span class="keyword">return</span> done()
+        <span class="property">@_push</span> [<span class="property">@leftover</span>]
+        <span class="property">@push</span> <span class="literal">null</span>
+        done()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Utility class for a secure single-user search server.</p>
+<p><strong>Note:</strong>  The server utility doesn&#39;t offer any user authentication.
+    Authenticating file/index uploads is strongly recommended (for the obvious
+    reason), but will have to be done by the developer.  Searches and
+    and downloads do not require authentication, but it doesn&#39;t hurt.</p>
+<ol>
+<li><code>index</code> is the secure index to initialize the server.  Use {} if none.  To
+persist the secure index, before the application is shut down access
+Server.index and save the object in a persistent data store.  <em>(Object)</em></li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">exports</span>.<span class="title">Server</span></span>
+    constructor: (<span class="property">@index</span>) -&gt;
+        <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">this</span> <span class="keyword">instanceof</span> exports.Server
+            <span class="keyword">return</span> <span class="keyword">new</span> exports.Server <span class="property">@index</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Takes a secure query and returns an array of matching document ids.</p>
+<ol>
+<li><code>query</code> a secure query generated by the client.  <em>(Object)</em></li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    search: (query) -&gt;
+        out = []
+        <span class="keyword">for</span> dn, trpdrs <span class="keyword">of</span> query
+            <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@index</span>[dn]? <span class="keyword">then</span> <span class="keyword">return</span>
+            domain = <span class="property">@index</span>[dn].index
+            
+            <span class="function"><span class="title">good</span></span> = (entry) -&gt; entry? <span class="keyword">and</span> -<span class="number">1</span> <span class="keyword">is</span> out.indexOf entry
+            out.push domain[trpdr] <span class="keyword">for</span> trpdr <span class="keyword">in</span> trpdrs <span class="keyword">when</span> good domain[trpdr]
+        
+        out.sort (a, b) -&gt; b[<span class="number">1</span>] - a[<span class="number">1</span>]</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Attempts to update the secure index.  Will either return true, indicating
+that the update was successful or a merge request telling the client to 
+merge it&#39;s current index with the given index and retry.</p>
+<ol>
+<li><code>domain</code> is the index domain name.  Domain names should have no
+publicly discernable relationship to the data under them.  It is
+recommended (but not required) that they be random.  Cannont take the
+value <code>sorting</code>.  <em>(String)</em></li>
+<li><code>index</code> the new secure index supplied by the client.  <em>(Object)</em></li>
+<li><code>reps</code> is the list old domains that this new request will replace.
+<em>(Array)</em></li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    update: (domain, index, reps = []) -&gt;
+        <span class="keyword">for</span> dn, cand <span class="keyword">of</span> <span class="property">@index</span>
+            <span class="keyword">if</span> cand.docs.length &lt;= index.docs.length <span class="keyword">and</span> reps.indexOf(dn) <span class="keyword">is</span> -<span class="number">1</span>
+                <span class="keyword">return</span> [dn, cand.docs]
+        
+        <span class="keyword">delete</span> <span class="property">@index</span>[dn] <span class="keyword">for</span> dn <span class="keyword">in</span> reps
+        <span class="property">@index</span>[domain] = index
+        
+        <span class="literal">true</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Utility class for a secure multi-user search server.</p>
+<p><strong>Note:</strong>  Same recommendations on authentication as above.  However, the
+    server&#39;s state <em>is</em> authenticated, and will throw an error if auth fails.</p>
+<p><strong>Note:</strong>  This utility doesn&#39;t provide anywhere to store things like packed
+    keys, even though providing such a place is recommended.  It should be
+    observed that even though the server isn&#39;t allowed to decrypt packed keys
+    and the like, they are signed by document owners and can be verified by
+    the server nevertheless.</p>
+<ol>
+<li><code>state</code> is the state provided by the client.  <em>(Buffer)</em></li>
+<li><code>index</code> is the secure index to initialize the server...  <em>(See above.)</em></li>
+<li><code>keychain</code> follows the same format as <code>caesar.message.Encrypter.keys</code>.  The
+server&#39;s private key should be in the <code>private</code> section of the object
+(under the name <code>server</code>).  The public key(s) of the document 
+owner(s) should be in the <code>public</code> section.  <em>(Object)</em></li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">exports</span>.<span class="title">MultiUserServer</span> <span class="keyword">extends</span> <span class="title">exports</span>.<span class="title">Server</span></span>
+    constructor: (state, <span class="property">@index</span>, <span class="property">@keychain</span>) -&gt;
+        <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">this</span> <span class="keyword">instanceof</span> exports.MultiUserServer
+            <span class="keyword">return</span> <span class="keyword">new</span> exports.MultiUserServer state, <span class="property">@index</span>, <span class="property">@keychain</span>
+        
+        <span class="keyword">if</span> state <span class="keyword">isnt</span> <span class="literal">null</span> <span class="keyword">then</span> <span class="property">@state</span> state</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Sets the state of the server.</p>
+<ol>
+<li><code>state</code> is the provided state.  <em>(Buffer)</em></li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    state: (state) -&gt;
+        decrypter = <span class="keyword">new</span> message.Decrypter <span class="property">@keychain</span>, <span class="literal">true</span>, <span class="string">'asym'</span>
+        decrypter.write state
+        <span class="property">@stateKey</span> = decrypter.read()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p><em>(See above.)</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    search: (query) -&gt;
+        <span class="keyword">for</span> domain, trpdrs <span class="keyword">of</span> query <span class="comment"># Decrypt query.</span>
+            <span class="keyword">for</span> i, trpdr <span class="keyword">of</span> trpdrs
+                decipher = crypto.createDecipher <span class="string">'aes-256-ctr'</span>, <span class="property">@stateKey</span>
+                decipher.write trpdr, <span class="string">'base64'</span>
+                query[domain][i] = decipher.read().toString <span class="string">'base64'</span>
+        
+        <span class="keyword">super</span> query</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>Utility class for a secure single-user search client.</p>
+<ol>
+<li><code>keys</code> is the keyring used to maintain the secure index.  The initial value
+should be in the form <code>{sorting: caesar.key.createRandom()}</code>.
+To persist the key ring, before the application is shut down access
+Client.keys and save the object in a persistent data store.  <em>(Object)</em></li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">exports</span>.<span class="title">Client</span></span>
+    constructor: (<span class="property">@keys</span>) -&gt;
+        <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">this</span> <span class="keyword">instanceof</span> exports.Client
+            <span class="keyword">return</span> <span class="keyword">new</span> exports.Client <span class="property">@keys</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>Deletes the information on domains that have been outdated.</p>
+<ol>
+<li><code>dn</code> is a domain name to delete.  <em>(String)</em></li>
+<li>...</li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    outdate: (dns...) -&gt; <span class="keyword">delete</span> <span class="property">@keys</span>[dn] <span class="keyword">for</span> dn <span class="keyword">in</span> dns</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>Creates a secure query on a given word.</p>
+<ol>
+<li><code>word</code> the word to generate the query on.  <em>(String)</em></li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    createQuery: (word) -&gt;
+        word = word.substr <span class="number">0</span>, <span class="number">28</span>
+        offset = <span class="number">28</span> - word.length
+        
+        out = {}
+        <span class="keyword">for</span> dn, key <span class="keyword">of</span> <span class="property">@keys</span> <span class="keyword">when</span> dn <span class="keyword">isnt</span> <span class="string">'sorting'</span>
+            out[dn] = []
+            i = <span class="number">0</span>
+            
+            <span class="keyword">until</span> i <span class="keyword">is</span> key[<span class="number">0</span>]
+                buff = <span class="keyword">new</span> Buffer <span class="number">32</span>
+                buff.fill <span class="number">0</span>
+                buff.writeUInt32BE i, <span class="number">28</span>
+                buff.write word, offset, word.length
+                
+                hash = crypto.createHash <span class="string">'sha256'</span>
+                hash.end buff
+                sum = hash.read()
+                
+                cipher = crypto.createCipher <span class="string">'aes-256-cbc'</span>, key[<span class="number">1</span>]
+                cipher.write sum
+                
+                k = cipher.read().toString <span class="string">'base64'</span>
+                out[dn].push k
+                ++i
+        
+        out</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>Creates a secure index.</p>
+<ol>
+<li><code>domain</code> is the domain name of the index.  See Server.update for more
+information on domain names.  <em>(String)</em></li>
+<li><code>max</code> is the size in bytes of the largest document included in the
+given index.  <em>(Number)</em></li>
+<li><code>index</code> is an index to secure.  (From Indexer or the like).  <em>(Object)</em></li>
+<li>...</li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    secureIndex: (domain, max, indexes...) -&gt;
+        key = crypto.randomBytes <span class="number">32</span>
+        index = {} <span class="comment"># Merge indexes.</span>
+        
+        <span class="keyword">for</span> list <span class="keyword">in</span> indexes
+            <span class="keyword">for</span> word, count <span class="keyword">of</span> list.list
+                <span class="keyword">if</span> index[word]? <span class="keyword">then</span> index[word].push [list.id, count]
+                <span class="keyword">else</span> index[word] = [[list.id, count]] 
+        
+        sindex = {} <span class="comment"># Secure index</span>
+        <span class="keyword">for</span> word, entries <span class="keyword">of</span> index
+            word = word.substr <span class="number">0</span>, <span class="number">28</span>
+            offset = <span class="number">28</span> - word.length
+            
+            <span class="keyword">for</span> n, entry <span class="keyword">of</span> entries
+                buff = <span class="keyword">new</span> Buffer <span class="number">32</span>
+                buff.fill <span class="number">0</span>
+                buff.writeUInt32BE n, <span class="number">28</span>
+                buff.write word, offset, word.length
+                
+                hash = crypto.createHash <span class="string">'sha256'</span>
+                hash.end buff
+                sum = hash.read()
+                
+                cipher = crypto.createCipher <span class="string">'aes-256-cbc'</span>, key
+                cipher.write sum
+                
+                k = cipher.read().toString <span class="string">'base64'</span>
+                
+                entry[<span class="number">1</span>] = opse.encrypt <span class="property">@keys</span>.sorting, entry[<span class="number">1</span>]
+                sindex[k] = entry
+        
+        words = Object.keys index <span class="comment"># Get an array of the unique words.</span>
+        docs = [] <span class="comment"># Get an array of unique document ids</span>
+        <span class="keyword">for</span> word, entries <span class="keyword">of</span> index
+            docs.push ent[<span class="number">0</span>] <span class="keyword">for</span> ent <span class="keyword">in</span> entries <span class="keyword">when</span> -<span class="number">1</span> <span class="keyword">is</span> docs.indexOf ent[<span class="number">0</span>]
+        
+        <span class="property">@keys</span>[domain] = [docs.length, key] <span class="comment"># Key management.</span>
+        
+        one = [<span class="number">256</span>, <span class="number">131072</span>, <span class="number">50331648</span>] <span class="comment"># Pad the secure index.</span>
+        two = [<span class="number">256</span>, <span class="number">65536</span>, <span class="number">16777216</span>]
+        [threshold, sum, i] = [<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]
+        
+        <span class="keyword">while</span> threshold &lt;= max
+            threshold += one[i]
+            sum += two[i]
+            ++i
+        
+        threshold = threshold - one[i - <span class="number">1</span>]
+        sum = sum - two[i - <span class="number">1</span>]
+        sum += Math.floor((max - threshold) / i)
+        
+        <span class="keyword">for</span> id <span class="keyword">in</span> docs
+            c = <span class="number">0</span> <span class="comment"># Number of entries in the index that already contain id.</span>
+            ++c <span class="keyword">for</span> entry <span class="keyword">in</span> sindex <span class="keyword">when</span> entry <span class="keyword">is</span> id
+            
+            l = sum - c
+            <span class="keyword">while</span> l -= <span class="number">1</span>
+                buff = <span class="keyword">new</span> Buffer <span class="number">32</span>
+                buff.fill <span class="number">0</span>
+                buff.writeUInt32BE docs.length + l, <span class="number">28</span>
+                
+                hash = crypto.createHash <span class="string">'sha256'</span>
+                hash.end buff
+                sum = hash.read()
+                
+                cipher = crypto.createCipher <span class="string">'aes-256-cbc'</span>, key
+                cipher.write sum
+                cipher.end <span class="string">'00000000'</span>, <span class="string">'hex'</span>
+                data = cipher.read()
+                
+                k = data.slice(<span class="number">0</span>, <span class="number">32</span>).toString <span class="string">'base64'</span>
+                n = data.slice(<span class="number">32</span>).readUInt32BE(<span class="number">0</span>) % <span class="number">131072</span>
+                
+                sindex[k] = [id, n]
+        
+        <span class="function"><span class="title">shuffle</span></span> = (array) -&gt;
+            i = array.length
+            <span class="keyword">if</span> i <span class="keyword">is</span> <span class="number">0</span> <span class="keyword">then</span> <span class="keyword">return</span> <span class="literal">false</span>
+            
+            bytes = Math.ceil(Math.log(array.length) / (<span class="number">8</span> * Math.log(<span class="number">2</span>)))
+            <span class="keyword">while</span> i -= <span class="number">1</span>
+                j = array.length <span class="comment"># Guess random numbers until one is in range.</span>
+                <span class="keyword">until</span> j &lt; array.length
+                    a = <span class="keyword">new</span> Buffer <span class="number">4</span> <span class="comment"># Create new blank buffer.</span>
+                    a.fill <span class="number">0</span>
+                    
+                    b = crypto.randomBytes bytes <span class="comment"># Write random 32bit uint.</span>
+                    b.copy a
+                    
+                    j = a.readUInt32LE(<span class="number">0</span>) <span class="comment"># Read as 32bit uint.</span>
+                
+                [array[j], array[i]] = [array[i], array[j]] <span class="comment"># Swap values.</span>
+            
+            array
+        
+        keys = shuffle Object.keys sindex <span class="comment"># Shuffle the secure index.</span>
+        rsindex = {}
+        rsindex[key] = sindex[key] <span class="keyword">for</span> key <span class="keyword">in</span> keys
+        
+        docs: docs, index: rsindex</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>Utility class for a secure multi-user search client.</p>
+<ol>
+<li><code>keys</code> is the keyring used to maintain the secure index.  <em>(See above.)</em></li>
+<li><code>keychain</code> follows the same format as <code>caesar.message.Encrypter.keys</code>.  The
+current user&#39;s private key should be in the <code>private</code> section of this
+object.  The document owner(s) should have their own, the server&#39;s, and all
+authenticated users&#39; public keys in the <code>public</code> section.  Other users only
+need to have the document owner(s)&#39; public key(s) in the <code>public</code> section.
+<em>(Object)</em></li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">exports</span>.<span class="title">MultiUserClient</span> <span class="keyword">extends</span> <span class="title">exports</span>.<span class="title">Client</span></span>
+    constructor: (<span class="property">@keys</span>, <span class="property">@keychain</span> = {}) -&gt;
+        <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">this</span> <span class="keyword">instanceof</span> exports.MultiUserClient
+            <span class="keyword">return</span> <span class="keyword">new</span> exports.MultiUserClient <span class="property">@keys</span>, <span class="property">@keychain</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>Calculates a state for the server.  Only document owners can call this
+function.  This function&#39;s output authenticates user queries on the
+server, and should be used to add/revoke user access by adding/removing
+them from your keychain.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    state: -&gt;
+        key = crypto.randomBytes <span class="number">32</span>
+        encrypter = <span class="keyword">new</span> message.Encrypter <span class="property">@keychain</span>, <span class="literal">true</span>, <span class="string">'asym'</span>
+        encrypter.write key
+        
+        encrypter.read()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>Packs the keys used to manage the secure index so that they can be posted
+publicly and unpacked by other authorized users.  Only document owners can
+call this function.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    packKeys: -&gt;
+        out = {}
+        
+        server = <span class="property">@keychain</span>.server
+        <span class="keyword">delete</span> <span class="property">@keychain</span>.server
+        
+        encrypter = <span class="keyword">new</span> message.Encrypter <span class="property">@keychain</span>, <span class="literal">true</span>, <span class="string">'asym'</span>
+        encrypter.write <span class="keyword">new</span> Buffer JSON.stringify <span class="property">@keys</span>
+        
+        <span class="property">@keychain</span>.server = server
+        encrypter.read()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>Unpacks the keys used to manage the secure index.  Any user can call this
+function.</p>
+<ol>
+<li><code>packed</code> is the encrypted keychain to unpack.  <em>(Buffer)</em></li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    unpackKeys: (packed) -&gt;
+        server = <span class="property">@keychain</span>.server
+        <span class="keyword">delete</span> <span class="property">@keychain</span>.server
+        
+        decrypter = <span class="keyword">new</span> message.Decrypter <span class="property">@keychain</span>, <span class="literal">true</span>, <span class="string">'asym'</span>
+        decrypter.write packed
+        out = JSON.parse decrypter.read()
+        
+        <span class="property">@keys</span>[dn] = [key[<span class="number">0</span>], <span class="keyword">new</span> Buffer(key[<span class="number">1</span>])] <span class="keyword">for</span> dn, key <span class="keyword">of</span> out
+        <span class="property">@keychain</span>.server = server</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>Creates a secure query on a given word.  Any user can call this function.</p>
+<ol>
+<li><code>state</code> is the current server state.  <em>(Buffer)</em></li>
+<li><code>word</code> the word to generate the query on... <em>(See above.)</em></li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    createQuery: (state, word) -&gt;
+        decrypter = <span class="keyword">new</span> message.Decrypter <span class="property">@keychain</span>, <span class="literal">true</span>, <span class="string">'asym'</span>
+        decrypter.write state
+        key = decrypter.read() <span class="comment"># Decrypt state to get the key.</span>
+        
+        query = <span class="keyword">super</span> word
+        
+        <span class="keyword">for</span> domain, trpdrs <span class="keyword">of</span> query <span class="comment"># Encrypt query.</span>
+            <span class="keyword">for</span> i, trpdr <span class="keyword">of</span> trpdrs
+                cipher = crypto.createCipher <span class="string">'aes-256-ctr'</span>, key
+                cipher.write trpdr, <span class="string">'base64'</span>
+                query[domain][i] = cipher.read().toString <span class="string">'base64'</span>
+        
+        query</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

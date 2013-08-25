@@ -12,7 +12,7 @@ privKey = caesar.key.createPrivate()
 key = public: {me: privKey}, private: {me: privKey}
 
 # Setup the search client.
-keys = {}
+keys = {sorting: caesar.key.createRandom()}
 client = new caesar.searchable.Client keys
 
 # This is the most complicated function of all of this.  Here's the gist of 

@@ -5,6 +5,7 @@
   "main": "caesar.js",
   "dependencies": {
     "ursa": "*",
-    "msgpack": "*"
+    "msgpack": "*",
+    "bigdecimal": "*"
   }
 }

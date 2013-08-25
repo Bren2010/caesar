@@ -1,6 +1,7 @@
 crypto = require 'crypto'
 stream = require 'stream'
 message = require './message'
+opse = require './opse'
 
 # Largely a passthrough stream.  It won't change the data, but it will do some 
 # trivial index generation and keep track of the size of the data passed to it.
@@ -17,12 +18,14 @@ class exports.Indexer extends stream.Transform
             return new exports.Indexer @id
         
         stream.Transform.call this, decodeStrings: true
-        [@index, @leftover, @size] = [{}, '', 0]
+        [@index, @leftover, @size] = [{id: @id, list: {}}, '', 0]
     
     _clean: (word) -> word.toLowerCase().replace /[^a-z0-9]/g, ''
     _push: (data) ->
         data[i] = @_clean word for i, word of data
-        @index[word] = @id for word in data
+        for word in data
+            if @index.list[word]? then ++@index.list[word]
+            else @index.list[word] = 1
         
         delete @index['']
     
@@ -43,6 +46,7 @@ class exports.Indexer extends stream.Transform
 
 
 # Utility class for a secure single-user search server.
+#
 # **Note:**  The server utility doesn't offer any user authentication.
 #     Authenticating file/index uploads is strongly recommended (for the obvious
 #     reason), but will have to be done by the developer.  Searches and
@@ -65,10 +69,10 @@ class exports.Server
             if not @index[dn]? then return
             domain = @index[dn].index
             
-            good = (id) -> id? and -1 is out.indexOf id
+            good = (entry) -> entry? and -1 is out.indexOf entry
             out.push domain[trpdr] for trpdr in trpdrs when good domain[trpdr]
         
-        out
+        out.sort (a, b) -> b[1] - a[1]
     
     # Attempts to update the secure index.  Will either return true, indicating
     # that the update was successful or a merge request telling the client to 
@@ -76,7 +80,8 @@ class exports.Server
     #
     # 1. `domain` is the index domain name.  Domain names should have no
     #    publicly discernable relationship to the data under them.  It is
-    #    recommended (but not required) that they be random.  *(String)*
+    #    recommended (but not required) that they be random.  Cannont take the
+    #    value `sorting`.  *(String)*
     # 2. `index` the new secure index supplied by the client.  *(Object)*
     # 3. `reps` is the list old domains that this new request will replace.
     #    *(Array)*
@@ -136,7 +141,8 @@ class exports.MultiUserServer extends exports.Server
 
 # Utility class for a secure single-user search client.
 #
-# 1. `keys` is the keyring used to maintain the secure index.  Use {} if none.
+# 1. `keys` is the keyring used to maintain the secure index.  The initial value
+#    should be in the form `{sorting: caesar.key.createRandom()}`.
 #    To persist the key ring, before the application is shut down access
 #    Client.keys and save the object in a persistent data store.  *(Object)*
 class exports.Client
@@ -158,7 +164,7 @@ class exports.Client
         offset = 28 - word.length
         
         out = {}
-        for dn, key of @keys
+        for dn, key of @keys when dn isnt 'sorting'
             out[dn] = []
             i = 0
             
@@ -173,7 +179,7 @@ class exports.Client
                 sum = hash.read()
                 
                 cipher = crypto.createCipher 'aes-256-cbc', key[1]
-                cipher.end sum
+                cipher.write sum
                 
                 k = cipher.read().toString 'base64'
                 out[dn].push k
@@ -194,15 +200,16 @@ class exports.Client
         index = {} # Merge indexes.
         
         for list in indexes
-            index[word].push id for word, id of list when index[word]?
-            index[word] = [id] for word, id of list when not index[word]?
+            for word, count of list.list
+                if index[word]? then index[word].push [list.id, count]
+                else index[word] = [[list.id, count]] 
         
         sindex = {} # Secure index
-        for word, ids of index
+        for word, entries of index
             word = word.substr 0, 28
             offset = 28 - word.length
             
-            for n, id of ids
+            for n, entry of entries
                 buff = new Buffer 32
                 buff.fill 0
                 buff.writeUInt32BE n, 28
@@ -213,15 +220,17 @@ class exports.Client
                 sum = hash.read()
                 
                 cipher = crypto.createCipher 'aes-256-cbc', key
-                cipher.end sum
+                cipher.write sum
                 
                 k = cipher.read().toString 'base64'
-                sindex[k] = id
+                
+                entry[1] = opse.encrypt @keys.sorting, entry[1]
+                sindex[k] = entry
         
         words = Object.keys index # Get an array of the unique words.
         docs = [] # Get an array of unique document ids
-        for word, ids of index
-            docs.push id for id in ids when -1 is docs.indexOf id
+        for word, entries of index
+            docs.push ent[0] for ent in entries when -1 is docs.indexOf ent[0]
         
         @keys[domain] = [docs.length, key] # Key management.
         
@@ -238,10 +247,6 @@ class exports.Client
         sum = sum - two[i - 1]
         sum += Math.floor((max - threshold) / i)
         
-        docs = [] # Get an array of unique document ids
-        for word, ids of index
-            docs.push id for id in ids when -1 is docs.indexOf id
-        
         for id in docs
             c = 0 # Number of entries in the index that already contain id.
             ++c for entry in sindex when entry is id
@@ -257,10 +262,14 @@ class exports.Client
                 sum = hash.read()
                 
                 cipher = crypto.createCipher 'aes-256-cbc', key
-                cipher.end sum
+                cipher.write sum
+                cipher.end '00000000', 'hex'
+                data = cipher.read()
                 
-                k = cipher.read().toString 'base64'
-                sindex[k] = id
+                k = data.slice(0, 32).toString 'base64'
+                n = data.slice(32).readUInt32BE(0) % 131072
+                
+                sindex[k] = [id, n]
         
         shuffle = (array) ->
             i = array.length

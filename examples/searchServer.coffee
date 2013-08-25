@@ -35,12 +35,12 @@ listener = http.createServer (req, res) ->
             
             decoder.on 'data', (line) ->
                 [key, value] = line.toString().split ':'
-                index[key] = value
+                index[key] = value.toString().split ','
             
             req.on 'end', -> # Attempt and update.
-                domain = index.domain
-                replaces = index.replaces.split ','
-                docs = index.docs.split ','
+                domain = index.domain[0]
+                replaces = index.replaces
+                docs = index.docs
                 
                 delete index.domain
                 delete index.replaces
@@ -67,7 +67,7 @@ listener = http.createServer (req, res) ->
                 
                 # Typically, its good manners to just send the docs instead.
                 res.writeHead 200, 'Content-Type': 'text/plain'
-                res.write id + '\n' for id in out
+                res.write id[0] + '\n' for id in out
                 res.end()
         
         # Never let the user download an index that they uploaded earlier!  They

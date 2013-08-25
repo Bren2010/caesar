@@ -49,6 +49,11 @@
               </a>
             
               
+              <a class="source" href="opse.html">
+                opse.coffee
+              </a>
+            
+              
               <a class="source" href="searchable.html">
                 searchable.coffee
               </a>
@@ -78,7 +83,8 @@
             
             <div class="content"><div class='highlight'><pre>crypto = require <span class="string">'crypto'</span>
 stream = require <span class="string">'stream'</span>
-message = require <span class="string">'./message'</span></pre></div></div>
+message = require <span class="string">'./message'</span>
+opse = require <span class="string">'./opse'</span></pre></div></div>
             
         </li>
         
@@ -108,12 +114,14 @@ Snowflake or RethinkDB are fine to use.  <em>(Object)</em></li>
             <span class="keyword">return</span> <span class="keyword">new</span> exports.Indexer <span class="property">@id</span>
         
         stream.Transform.call <span class="keyword">this</span>, decodeStrings: <span class="literal">true</span>
-        [<span class="property">@index</span>, <span class="property">@leftover</span>, <span class="property">@size</span>] = [{}, <span class="string">''</span>, <span class="number">0</span>]
+        [<span class="property">@index</span>, <span class="property">@leftover</span>, <span class="property">@size</span>] = [{id: <span class="property">@id</span>, list: {}}, <span class="string">''</span>, <span class="number">0</span>]
     
     _clean: (word) -&gt; word.toLowerCase().replace <span class="regexp">/[^a-z0-9]/g</span>, <span class="string">''</span>
     _push: (data) -&gt;
         data[i] = <span class="property">@_clean</span> word <span class="keyword">for</span> i, word <span class="keyword">of</span> data
-        <span class="property">@index</span>[word] = <span class="property">@id</span> <span class="keyword">for</span> word <span class="keyword">in</span> data
+        <span class="keyword">for</span> word <span class="keyword">in</span> data
+            <span class="keyword">if</span> <span class="property">@index</span>.list[word]? <span class="keyword">then</span> ++<span class="property">@index</span>.list[word]
+            <span class="keyword">else</span> <span class="property">@index</span>.list[word] = <span class="number">1</span>
         
         <span class="keyword">delete</span> <span class="property">@index</span>[<span class="string">''</span>]
     
@@ -141,8 +149,8 @@ Snowflake or RethinkDB are fine to use.  <em>(Object)</em></li>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>Utility class for a secure single-user search server.
-<strong>Note:</strong>  The server utility doesn&#39;t offer any user authentication.
+              <p>Utility class for a secure single-user search server.</p>
+<p><strong>Note:</strong>  The server utility doesn&#39;t offer any user authentication.
     Authenticating file/index uploads is strongly recommended (for the obvious
     reason), but will have to be done by the developer.  Searches and
     and downloads do not require authentication, but it doesn&#39;t hurt.</p>
@@ -181,10 +189,10 @@ Server.index and save the object in a persistent data store.  <em>(Object)</em><
             <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@index</span>[dn]? <span class="keyword">then</span> <span class="keyword">return</span>
             domain = <span class="property">@index</span>[dn].index
             
-            <span class="function"><span class="title">good</span></span> = (id) -&gt; id? <span class="keyword">and</span> -<span class="number">1</span> <span class="keyword">is</span> out.indexOf id
+            <span class="function"><span class="title">good</span></span> = (entry) -&gt; entry? <span class="keyword">and</span> -<span class="number">1</span> <span class="keyword">is</span> out.indexOf entry
             out.push domain[trpdr] <span class="keyword">for</span> trpdr <span class="keyword">in</span> trpdrs <span class="keyword">when</span> good domain[trpdr]
         
-        out</pre></div></div>
+        out.sort (a, b) -&gt; b[<span class="number">1</span>] - a[<span class="number">1</span>]</pre></div></div>
             
         </li>
         
@@ -201,7 +209,8 @@ merge it&#39;s current index with the given index and retry.</p>
 <ol>
 <li><code>domain</code> is the index domain name.  Domain names should have no
 publicly discernable relationship to the data under them.  It is
-recommended (but not required) that they be random.  <em>(String)</em></li>
+recommended (but not required) that they be random.  Cannont take the
+value <code>sorting</code>.  <em>(String)</em></li>
 <li><code>index</code> the new secure index supplied by the client.  <em>(Object)</em></li>
 <li><code>reps</code> is the list old domains that this new request will replace.
 <em>(Array)</em></li>
@@ -308,7 +317,8 @@ owner(s) should be in the <code>public</code> section.  <em>(Object)</em></li>
               </div>
               <p>Utility class for a secure single-user search client.</p>
 <ol>
-<li><code>keys</code> is the keyring used to maintain the secure index.  Use {} if none.
+<li><code>keys</code> is the keyring used to maintain the secure index.  The initial value
+should be in the form <code>{sorting: caesar.key.createRandom()}</code>.
 To persist the key ring, before the application is shut down access
 Client.keys and save the object in a persistent data store.  <em>(Object)</em></li>
 </ol>
@@ -360,7 +370,7 @@ Client.keys and save the object in a persistent data store.  <em>(Object)</em></
         offset = <span class="number">28</span> - word.length
         
         out = {}
-        <span class="keyword">for</span> dn, key <span class="keyword">of</span> <span class="property">@keys</span>
+        <span class="keyword">for</span> dn, key <span class="keyword">of</span> <span class="property">@keys</span> <span class="keyword">when</span> dn <span class="keyword">isnt</span> <span class="string">'sorting'</span>
             out[dn] = []
             i = <span class="number">0</span>
             
@@ -375,7 +385,7 @@ Client.keys and save the object in a persistent data store.  <em>(Object)</em></
                 sum = hash.read()
                 
                 cipher = crypto.createCipher <span class="string">'aes-256-cbc'</span>, key[<span class="number">1</span>]
-                cipher.end sum
+                cipher.write sum
                 
                 k = cipher.read().toString <span class="string">'base64'</span>
                 out[dn].push k
@@ -409,15 +419,16 @@ given index.  <em>(Number)</em></li>
         index = {} <span class="comment"># Merge indexes.</span>
         
         <span class="keyword">for</span> list <span class="keyword">in</span> indexes
-            index[word].push id <span class="keyword">for</span> word, id <span class="keyword">of</span> list <span class="keyword">when</span> index[word]?
-            index[word] = [id] <span class="keyword">for</span> word, id <span class="keyword">of</span> list <span class="keyword">when</span> <span class="keyword">not</span> index[word]?
+            <span class="keyword">for</span> word, count <span class="keyword">of</span> list.list
+                <span class="keyword">if</span> index[word]? <span class="keyword">then</span> index[word].push [list.id, count]
+                <span class="keyword">else</span> index[word] = [[list.id, count]] 
         
         sindex = {} <span class="comment"># Secure index</span>
-        <span class="keyword">for</span> word, ids <span class="keyword">of</span> index
+        <span class="keyword">for</span> word, entries <span class="keyword">of</span> index
             word = word.substr <span class="number">0</span>, <span class="number">28</span>
             offset = <span class="number">28</span> - word.length
             
-            <span class="keyword">for</span> n, id <span class="keyword">of</span> ids
+            <span class="keyword">for</span> n, entry <span class="keyword">of</span> entries
                 buff = <span class="keyword">new</span> Buffer <span class="number">32</span>
                 buff.fill <span class="number">0</span>
                 buff.writeUInt32BE n, <span class="number">28</span>
@@ -428,15 +439,17 @@ given index.  <em>(Number)</em></li>
                 sum = hash.read()
                 
                 cipher = crypto.createCipher <span class="string">'aes-256-cbc'</span>, key
-                cipher.end sum
+                cipher.write sum
                 
                 k = cipher.read().toString <span class="string">'base64'</span>
-                sindex[k] = id
+                
+                entry[<span class="number">1</span>] = opse.encrypt <span class="property">@keys</span>.sorting, entry[<span class="number">1</span>]
+                sindex[k] = entry
         
         words = Object.keys index <span class="comment"># Get an array of the unique words.</span>
         docs = [] <span class="comment"># Get an array of unique document ids</span>
-        <span class="keyword">for</span> word, ids <span class="keyword">of</span> index
-            docs.push id <span class="keyword">for</span> id <span class="keyword">in</span> ids <span class="keyword">when</span> -<span class="number">1</span> <span class="keyword">is</span> docs.indexOf id
+        <span class="keyword">for</span> word, entries <span class="keyword">of</span> index
+            docs.push ent[<span class="number">0</span>] <span class="keyword">for</span> ent <span class="keyword">in</span> entries <span class="keyword">when</span> -<span class="number">1</span> <span class="keyword">is</span> docs.indexOf ent[<span class="number">0</span>]
         
         <span class="property">@keys</span>[domain] = [docs.length, key] <span class="comment"># Key management.</span>
         
@@ -453,10 +466,6 @@ given index.  <em>(Number)</em></li>
         sum = sum - two[i - <span class="number">1</span>]
         sum += Math.floor((max - threshold) / i)
         
-        docs = [] <span class="comment"># Get an array of unique document ids</span>
-        <span class="keyword">for</span> word, ids <span class="keyword">of</span> index
-            docs.push id <span class="keyword">for</span> id <span class="keyword">in</span> ids <span class="keyword">when</span> -<span class="number">1</span> <span class="keyword">is</span> docs.indexOf id
-        
         <span class="keyword">for</span> id <span class="keyword">in</span> docs
             c = <span class="number">0</span> <span class="comment"># Number of entries in the index that already contain id.</span>
             ++c <span class="keyword">for</span> entry <span class="keyword">in</span> sindex <span class="keyword">when</span> entry <span class="keyword">is</span> id
@@ -472,10 +481,14 @@ given index.  <em>(Number)</em></li>
                 sum = hash.read()
                 
                 cipher = crypto.createCipher <span class="string">'aes-256-cbc'</span>, key
-                cipher.end sum
+                cipher.write sum
+                cipher.end <span class="string">'00000000'</span>, <span class="string">'hex'</span>
+                data = cipher.read()
                 
-                k = cipher.read().toString <span class="string">'base64'</span>
-                sindex[k] = id
+                k = data.slice(<span class="number">0</span>, <span class="number">32</span>).toString <span class="string">'base64'</span>
+                n = data.slice(<span class="number">32</span>).readUInt32BE(<span class="number">0</span>) % <span class="number">131072</span>
+                
+                sindex[k] = [id, n]
         
         <span class="function"><span class="title">shuffle</span></span> = (array) -&gt;
             i = array.length

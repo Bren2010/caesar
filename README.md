@@ -22,4 +22,4 @@ My goal in writing this library is to provide simple and easy-to-use interfaces 
 
 Some things that might be added in the future include:  user authentication, more complex key exchanges, zero-knowledge proofs, and homomorphic encryption schemes, poker.
 
-I've tried to keep all of the code very well documented and write examples that concisely demonstrate proper use of the library.  If you encounter any problems or confusion while using the library, please [open an issue](https://github.com/Bren2010/caesar/issues) or [send me an email](https://github.com/Bren2010).
+I've tried to keep all of the code very well documented and write examples that concisely demonstrate proper use of the library.  If you encounter any problems or confusion while using the library, please [open an issue](https://github.com/Bren2010/caesar/issues) ~~or [send me an email](https://github.com/Bren2010)~~.

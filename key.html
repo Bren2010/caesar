@@ -81,11 +81,11 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre>fs = require <span class="string">'fs'</span>
-crypto = require <span class="string">'crypto'</span>
-ursa = require <span class="string">'ursa'</span>
+            <div class="content"><div class='highlight'><pre>fs = <span class="hljs-built_in">require</span> <span class="hljs-string">'fs'</span>
+crypto = <span class="hljs-built_in">require</span> <span class="hljs-string">'crypto'</span>
+ursa = <span class="hljs-built_in">require</span> <span class="hljs-string">'ursa'</span>
 
-salt = <span class="string">'lK4qA0RY8TRMq8duxRup'</span></pre></div></div>
+salt = <span class="hljs-string">'lK4qA0RY8TRMq8duxRup'</span></pre></div></div>
             
         </li>
         
@@ -105,7 +105,7 @@ salt = <span class="string">'lK4qA0RY8TRMq8duxRup'</span></pre></div></div>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>exports.<span class="function"><span class="title">createRandom</span></span> = (bytes = <span class="number">48</span>, cb) -&gt; crypto.randomBytes bytes, cb</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">exports</span>.<span class="hljs-function"><span class="hljs-title">createRandom</span> = <span class="hljs-params">(bytes = <span class="hljs-number">48</span>, cb)</span> -&gt;</span> crypto.randomBytes bytes, cb</pre></div></div>
             
         </li>
         
@@ -124,8 +124,8 @@ salt = <span class="string">'lK4qA0RY8TRMq8duxRup'</span></pre></div></div>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>exports.<span class="function"><span class="title">createPrivate</span></span> = (bytes = <span class="number">256</span>, exp = <span class="number">65537</span>) -&gt;
-    ursa.generatePrivateKey bytes * <span class="number">8</span>, exp</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">exports</span>.<span class="hljs-function"><span class="hljs-title">createPrivate</span> = <span class="hljs-params">(bytes = <span class="hljs-number">256</span>, exp = <span class="hljs-number">65537</span>)</span> -&gt;</span>
+    ursa.generatePrivateKey bytes * <span class="hljs-number">8</span>, exp</pre></div></div>
             
         </li>
         
@@ -145,8 +145,8 @@ salt = <span class="string">'lK4qA0RY8TRMq8duxRup'</span></pre></div></div>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>exports.<span class="function"><span class="title">fromPassword</span></span> = (password, bytes = <span class="number">32</span>, cb) -&gt;
-    crypto.pbkdf2 password, salt, <span class="number">4096</span>, bytes, cb</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">exports</span>.<span class="hljs-function"><span class="hljs-title">fromPassword</span> = <span class="hljs-params">(password, bytes = <span class="hljs-number">32</span>, cb)</span> -&gt;</span>
+    crypto.pbkdf2 password, salt, <span class="hljs-number">4096</span>, bytes, cb</pre></div></div>
             
         </li>
         
@@ -162,8 +162,8 @@ salt = <span class="string">'lK4qA0RY8TRMq8duxRup'</span></pre></div></div>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>exports.<span class="function"><span class="title">fromPasswordSync</span></span> = (password, bytes = <span class="number">32</span>) -&gt;
-    crypto.pbkdf2Sync password, salt, <span class="number">4096</span>, bytes</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">exports</span>.<span class="hljs-function"><span class="hljs-title">fromPasswordSync</span> = <span class="hljs-params">(password, bytes = <span class="hljs-number">32</span>)</span> -&gt;</span>
+    crypto.pbkdf2Sync password, salt, <span class="hljs-number">4096</span>, bytes</pre></div></div>
             
         </li>
         
@@ -182,10 +182,10 @@ salt = <span class="string">'lK4qA0RY8TRMq8duxRup'</span></pre></div></div>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>exports.<span class="function"><span class="title">loadPublicKey</span></span> = (loc, cb) -&gt;
-    fs.readFile loc, (err, data) -&gt;
-        <span class="keyword">if</span> err? <span class="keyword">then</span> cb err, <span class="literal">null</span>
-        <span class="keyword">else</span> cb <span class="literal">null</span>, ursa.createPublicKey data</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">exports</span>.<span class="hljs-function"><span class="hljs-title">loadPublicKey</span> = <span class="hljs-params">(loc, cb)</span> -&gt;</span>
+    fs.readFile loc, <span class="hljs-function"><span class="hljs-params">(err, data)</span> -&gt;</span>
+        <span class="hljs-keyword">if</span> err? <span class="hljs-keyword">then</span> cb err, <span class="hljs-literal">null</span>
+        <span class="hljs-keyword">else</span> cb <span class="hljs-literal">null</span>, ursa.createPublicKey data</pre></div></div>
             
         </li>
         
@@ -200,7 +200,7 @@ salt = <span class="string">'lK4qA0RY8TRMq8duxRup'</span></pre></div></div>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>exports.<span class="function"><span class="title">loadPublicKeySync</span></span> = (loc) -&gt;
+            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">exports</span>.<span class="hljs-function"><span class="hljs-title">loadPublicKeySync</span> = <span class="hljs-params">(loc)</span> -&gt;</span>
     data = fs.readFileSync loc
     ursa.createPublicKey data</pre></div></div>
             
@@ -221,10 +221,10 @@ salt = <span class="string">'lK4qA0RY8TRMq8duxRup'</span></pre></div></div>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>exports.<span class="function"><span class="title">loadPrivateKey</span></span> = (loc, cb) -&gt;
-    fs.readFile loc, (err, data) -&gt;
-        <span class="keyword">if</span> err? <span class="keyword">then</span> cb err, <span class="literal">null</span>
-        <span class="keyword">else</span> cb <span class="literal">null</span>, ursa.createPrivateKey data</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">exports</span>.<span class="hljs-function"><span class="hljs-title">loadPrivateKey</span> = <span class="hljs-params">(loc, cb)</span> -&gt;</span>
+    fs.readFile loc, <span class="hljs-function"><span class="hljs-params">(err, data)</span> -&gt;</span>
+        <span class="hljs-keyword">if</span> err? <span class="hljs-keyword">then</span> cb err, <span class="hljs-literal">null</span>
+        <span class="hljs-keyword">else</span> cb <span class="hljs-literal">null</span>, ursa.createPrivateKey data</pre></div></div>
             
         </li>
         
@@ -239,7 +239,7 @@ salt = <span class="string">'lK4qA0RY8TRMq8duxRup'</span></pre></div></div>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>exports.<span class="function"><span class="title">loadPrivateKeySync</span></span> = (loc) -&gt;
+            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">exports</span>.<span class="hljs-function"><span class="hljs-title">loadPrivateKeySync</span> = <span class="hljs-params">(loc)</span> -&gt;</span>
     data = fs.readFileSync loc
     ursa.createPrivateKey data</pre></div></div>
             

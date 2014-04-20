@@ -78,17 +78,17 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <p>Commitments are a cryptographic method of allowing somebody to &quot;commit&quot; to a
+              <p>Commitments are a cryptographic method of allowing somebody to “commit” to a
 value without revealing what that value is (confidential).  Later in time,
-they admit the value that they committed to and a &quot;decommitment&quot; so third
+they admit the value that they committed to and a “decommitment” so third
 parties can verify that they have not tried to change the value they committed
 to initially.</p>
 <p><a href="http://en.wikipedia.org/wiki/Commitment_scheme#Coin_flipping">http://en.wikipedia.org/wiki/Commitment_scheme#Coin_flipping</a></p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>ursa = require <span class="string">'ursa'</span>
-key = require <span class="string">'./key'</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>ursa = <span class="hljs-built_in">require</span> <span class="hljs-string">'ursa'</span>
+key = <span class="hljs-built_in">require</span> <span class="hljs-string">'./key'</span></pre></div></div>
             
         </li>
         
@@ -108,9 +108,9 @@ should be published along with the commited item later in time.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>exports.<span class="function"><span class="title">make</span></span> = (info) -&gt;
+            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">exports</span>.<span class="hljs-function"><span class="hljs-title">make</span> = <span class="hljs-params">(info)</span> -&gt;</span>
     privKey = key.createPrivate()
-    sig = privKey.hashAndSign <span class="string">'sha512'</span>, info
+    sig = privKey.hashAndSign <span class="hljs-string">'sha512'</span>, info
     
     [sig, privKey.toPublicPem()]</pre></div></div>
             
@@ -134,9 +134,9 @@ commitment.</li>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>exports.<span class="function"><span class="title">verify</span></span> = (candidate, commitment, decommitment) -&gt;
+            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">exports</span>.<span class="hljs-function"><span class="hljs-title">verify</span> = <span class="hljs-params">(candidate, commitment, decommitment)</span> -&gt;</span>
     pubKey = ursa.createPublicKey decommitment
-    pubKey.hashAndVerify <span class="string">'sha512'</span>, candidate, commitment</pre></div></div>
+    pubKey.hashAndVerify <span class="hljs-string">'sha512'</span>, candidate, commitment</pre></div></div>
             
         </li>
         

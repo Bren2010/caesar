@@ -81,7 +81,7 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre>stream = require <span class="string">'stream'</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>stream = <span class="hljs-built_in">require</span> <span class="hljs-string">'stream'</span></pre></div></div>
             
         </li>
         
@@ -101,15 +101,15 @@ writeable streams.  Best left alone.</li>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">exports</span>.<span class="title">EncodeByLine</span> <span class="keyword">extends</span> <span class="title">stream</span>.<span class="title">Transform</span></span>
-    constructor: (opts) -&gt;
-        <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">this</span> <span class="keyword">instanceof</span> exports.EncodeByLine
-            <span class="keyword">return</span> <span class="keyword">new</span> exports.EncodeByLine opts
+            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">exports</span>.<span class="hljs-title">EncodeByLine</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">stream</span>.<span class="hljs-title">Transform</span></span>
+    <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(opts)</span> -&gt;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">exports</span>.EncodeByLine
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">exports</span>.EncodeByLine opts
         
-        stream.Transform.call <span class="keyword">this</span>, opts
+        stream.Transform.call <span class="hljs-keyword">this</span>, opts
     
-    _transform: (chunk, encoding, done) -&gt;
-        <span class="property">@push</span> chunk + <span class="string">"\n"</span>
+    <span class="hljs-attribute">_transform</span>: <span class="hljs-function"><span class="hljs-params">(chunk, encoding, done)</span> -&gt;</span>
+        <span class="hljs-property">@push</span> chunk + <span class="hljs-string">"\n"</span>
         done()</pre></div></div>
             
         </li>
@@ -130,25 +130,25 @@ writeable streams.  Best left alone.</li>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">exports</span>.<span class="title">DecodeByLine</span> <span class="keyword">extends</span> <span class="title">stream</span>.<span class="title">Transform</span></span>
-    constructor: (opts) -&gt;
-        <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">this</span> <span class="keyword">instanceof</span> exports.DecodeByLine
-            <span class="keyword">return</span> <span class="keyword">new</span> exports.DecodeByLine opts
+            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">exports</span>.<span class="hljs-title">DecodeByLine</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">stream</span>.<span class="hljs-title">Transform</span></span>
+    <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(opts)</span> -&gt;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">exports</span>.DecodeByLine
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">exports</span>.DecodeByLine opts
         
-        stream.Transform.call <span class="keyword">this</span>, opts
-        <span class="property">@_lastLine</span> = <span class="string">""</span>
+        stream.Transform.call <span class="hljs-keyword">this</span>, opts
+        <span class="hljs-property">@_lastLine</span> = <span class="hljs-string">""</span>
     
-    _transform: (chunk, encoding, done) -&gt;
-        data = <span class="property">@_lastLine</span> + chunk.toString()
-        lines = data.split <span class="string">'\n'</span>
-        <span class="property">@_lastLine</span> = lines.splice(lines.length - <span class="number">1</span>, <span class="number">1</span>)[<span class="number">0</span>]
+    <span class="hljs-attribute">_transform</span>: <span class="hljs-function"><span class="hljs-params">(chunk, encoding, done)</span> -&gt;</span>
+        data = <span class="hljs-property">@_lastLine</span> + chunk.toString()
+        lines = data.split <span class="hljs-string">'\n'</span>
+        <span class="hljs-property">@_lastLine</span> = lines.splice(lines.length - <span class="hljs-number">1</span>, <span class="hljs-number">1</span>)[<span class="hljs-number">0</span>]
         
-        <span class="property">@push</span> line <span class="keyword">for</span> line <span class="keyword">in</span> lines
+        <span class="hljs-property">@push</span> line <span class="hljs-keyword">for</span> line <span class="hljs-keyword">in</span> lines
         done()
     
-    _flush: (done) -&gt;
-        <span class="keyword">if</span> <span class="property">@_lastLine</span>.length <span class="keyword">isnt</span> <span class="number">0</span> <span class="keyword">then</span> <span class="property">@push</span> <span class="property">@_lastLine</span>
-        <span class="property">@_lastLine</span> = <span class="string">""</span>
+    <span class="hljs-attribute">_flush</span>: <span class="hljs-function"><span class="hljs-params">(done)</span> -&gt;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-property">@_lastLine</span>.length <span class="hljs-keyword">isnt</span> <span class="hljs-number">0</span> <span class="hljs-keyword">then</span> <span class="hljs-property">@push</span> <span class="hljs-property">@_lastLine</span>
+        <span class="hljs-property">@_lastLine</span> = <span class="hljs-string">""</span>
         done()</pre></div></div>
             
         </li>
@@ -160,7 +160,7 @@ writeable streams.  Best left alone.</li>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>Prepends the data&#39;s length to each packet in a short.  This is binary safe.</p>
+              <p>Prepends the data’s length to each packet in a short.  This is binary safe.</p>
 <ol>
 <li><code>opts</code> are any options you want passed to the underlying readable and 
 writeable streams.  Best left alone.</li>
@@ -168,21 +168,21 @@ writeable streams.  Best left alone.</li>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">exports</span>.<span class="title">EncodeByLength</span> <span class="keyword">extends</span> <span class="title">stream</span>.<span class="title">Transform</span></span>
-    constructor: (opts) -&gt;
-        <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">this</span> <span class="keyword">instanceof</span> exports.EncodeByLength
-            <span class="keyword">return</span> <span class="keyword">new</span> exports.EncodeByLength opts
+            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">exports</span>.<span class="hljs-title">EncodeByLength</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">stream</span>.<span class="hljs-title">Transform</span></span>
+    <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(opts)</span> -&gt;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">exports</span>.EncodeByLength
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">exports</span>.EncodeByLength opts
         
-        stream.Transform.call <span class="keyword">this</span>, opts
+        stream.Transform.call <span class="hljs-keyword">this</span>, opts
     
-    _transform: (chunk, encoding, done) -&gt;
-        buff = <span class="keyword">new</span> Buffer chunk.length + <span class="number">2</span>
-        buff.writeUInt16BE chunk.length, <span class="number">0</span>
+    <span class="hljs-attribute">_transform</span>: <span class="hljs-function"><span class="hljs-params">(chunk, encoding, done)</span> -&gt;</span>
+        buff = <span class="hljs-keyword">new</span> Buffer chunk.length + <span class="hljs-number">2</span>
+        buff.writeUInt16BE chunk.length, <span class="hljs-number">0</span>
         
-        <span class="keyword">if</span> chunk <span class="keyword">instanceof</span> Buffer <span class="keyword">then</span> chunk.copy buff, <span class="number">2</span>
-        <span class="keyword">else</span> buff.write chunk, <span class="number">2</span>, chunk.length, encoding
+        <span class="hljs-keyword">if</span> chunk <span class="hljs-keyword">instanceof</span> Buffer <span class="hljs-keyword">then</span> chunk.copy buff, <span class="hljs-number">2</span>
+        <span class="hljs-keyword">else</span> buff.write chunk, <span class="hljs-number">2</span>, chunk.length, encoding
         
-        <span class="property">@push</span> buff
+        <span class="hljs-property">@push</span> buff
         done()</pre></div></div>
             
         </li>
@@ -203,27 +203,27 @@ writeable streams.  Best left alone.</li>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">exports</span>.<span class="title">DecodeByLength</span> <span class="keyword">extends</span> <span class="title">stream</span>.<span class="title">Transform</span></span>
-    constructor: (opts) -&gt;
-        <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">this</span> <span class="keyword">instanceof</span> exports.DecodeByLength
-            <span class="keyword">return</span> <span class="keyword">new</span> exports.DecodeByLength opts
+            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">exports</span>.<span class="hljs-title">DecodeByLength</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">stream</span>.<span class="hljs-title">Transform</span></span>
+    <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(opts)</span> -&gt;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">exports</span>.DecodeByLength
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">exports</span>.DecodeByLength opts
         
-        stream.Transform.call <span class="keyword">this</span>, opts
-        <span class="property">@_buffer</span> = <span class="keyword">new</span> Buffer <span class="string">''</span>
+        stream.Transform.call <span class="hljs-keyword">this</span>, opts
+        <span class="hljs-property">@_buffer</span> = <span class="hljs-keyword">new</span> Buffer <span class="hljs-string">''</span>
     
-    _transform: (chunk, encoding, done) -&gt;
-        <span class="keyword">if</span> <span class="keyword">not</span> Buffer.isBuffer chunk <span class="keyword">then</span> chunk = <span class="keyword">new</span> Buffer chunk, enc
-        <span class="property">@_buffer</span> = Buffer.concat [<span class="property">@_buffer</span>, chunk]
-        going = <span class="literal">true</span>
+    <span class="hljs-attribute">_transform</span>: <span class="hljs-function"><span class="hljs-params">(chunk, encoding, done)</span> -&gt;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> Buffer.isBuffer chunk <span class="hljs-keyword">then</span> chunk = <span class="hljs-keyword">new</span> Buffer chunk, enc
+        <span class="hljs-property">@_buffer</span> = Buffer.concat [<span class="hljs-property">@_buffer</span>, chunk]
+        going = <span class="hljs-literal">true</span>
         
-        <span class="keyword">while</span> going <span class="keyword">and</span> <span class="property">@_buffer</span>.length &gt; <span class="number">2</span>
-            len = <span class="property">@_buffer</span>.readUInt16BE <span class="number">0</span>
-            <span class="keyword">if</span> <span class="property">@_buffer</span>.length &gt;= (len + <span class="number">2</span>)
-                temp = <span class="keyword">new</span> Buffer len
-                <span class="property">@_buffer</span>.copy temp, <span class="number">0</span>, <span class="number">2</span>, len + <span class="number">2</span>
-                <span class="property">@_buffer</span> = <span class="property">@_buffer</span>.slice len + <span class="number">2</span>
-                <span class="property">@push</span> temp
-            <span class="keyword">else</span> going = <span class="literal">false</span>
+        <span class="hljs-keyword">while</span> going <span class="hljs-keyword">and</span> <span class="hljs-property">@_buffer</span>.length &gt; <span class="hljs-number">2</span>
+            len = <span class="hljs-property">@_buffer</span>.readUInt16BE <span class="hljs-number">0</span>
+            <span class="hljs-keyword">if</span> <span class="hljs-property">@_buffer</span>.length &gt;= (len + <span class="hljs-number">2</span>)
+                temp = <span class="hljs-keyword">new</span> Buffer len
+                <span class="hljs-property">@_buffer</span>.copy temp, <span class="hljs-number">0</span>, <span class="hljs-number">2</span>, len + <span class="hljs-number">2</span>
+                <span class="hljs-property">@_buffer</span> = <span class="hljs-property">@_buffer</span>.slice len + <span class="hljs-number">2</span>
+                <span class="hljs-property">@push</span> temp
+            <span class="hljs-keyword">else</span> going = <span class="hljs-literal">false</span>
         
         done()</pre></div></div>
             

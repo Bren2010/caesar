@@ -81,13 +81,13 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre>crypto = require <span class="string">'crypto'</span>
-ursa = require <span class="string">'ursa'</span>
-msgpack = require <span class="string">'msgpack'</span>
-stream = require <span class="string">'stream'</span>
-keyLib = require <span class="string">'./key'</span>
+            <div class="content"><div class='highlight'><pre>crypto = <span class="hljs-built_in">require</span> <span class="hljs-string">'crypto'</span>
+ursa = <span class="hljs-built_in">require</span> <span class="hljs-string">'ursa'</span>
+msgpack = <span class="hljs-built_in">require</span> <span class="hljs-string">'msgpack'</span>
+stream = <span class="hljs-built_in">require</span> <span class="hljs-string">'stream'</span>
+keyLib = <span class="hljs-built_in">require</span> <span class="hljs-string">'./key'</span>
 
-Buffer.prototype.<span class="function"><span class="title">toArray</span></span> = -&gt; Array.prototype.slice.call <span class="keyword">this</span>, <span class="number">0</span></pre></div></div>
+Buffer.prototype.<span class="hljs-function"><span class="hljs-title">toArray</span> = -&gt;</span> Array.prototype.slice.call <span class="hljs-keyword">this</span>, <span class="hljs-number">0</span></pre></div></div>
             
         </li>
         
@@ -105,13 +105,13 @@ data.</p>
 <li><code>key</code> - A random symmetric key, usually through
 <code>caesar.key.createRandom()</code>.  If present, this key will be used on all
 messages.  If not present, a random key will be created for each message.</li>
-<li><code>public</code> - An array or hash of public keys.  If a hash, the key&#39;s owner
-can be identified easier (by anybody--not just the owner).  If present, a
+<li><code>public</code> - An array or hash of public keys.  If a hash, the key’s owner
+can be identified easier (by anybody—not just the owner).  If present, a
 keyring will be available to the owners of the corresponding private keys
 that allows them to read the message without any previous knowledge of
 the symmetric key.</li>
-<li><code>private</code> - An array or hash of private keys.  If a hash, the key&#39;s owner
-can be identified easier (by anybody--not just the owner).  If present, 
+<li><code>private</code> - An array or hash of private keys.  If a hash, the key’s owner
+can be identified easier (by anybody—not just the owner).  If present, 
 asymmetric authentication can be used (signatures), which is publicly
 verifiable.</li>
 </ul>
@@ -119,8 +119,8 @@ verifiable.</li>
 <li><code>confidential</code> is whether or not the data should be encrypted to prevent
 eavesdropping.  <em>(Boolean)</em></li>
 <li><code>integrous</code> is the type of integrity that should be maintained.  Can be
-null (no integrity), &quot;sym&quot; (symmetric integrity, verifiable by others with
-the secret key), and &quot;asym&quot; (asymmetric integrity, verifiable by anyone).
+null (no integrity), “sym” (symmetric integrity, verifiable by others with
+the secret key), and “asym” (asymmetric integrity, verifiable by anyone).
 <em>(String)</em></li>
 <li><code>cut</code> is the maximum size of a plaintext chunk (where it should be cut).
 If you get strange errors, try lowering this below the default.  <em>(Number)</em></li>
@@ -128,80 +128,80 @@ If you get strange errors, try lowering this below the default.  <em>(Number)</e
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">exports</span>.<span class="title">Encrypter</span> <span class="keyword">extends</span> <span class="title">stream</span>.<span class="title">Transform</span></span>
-    constructor: (<span class="property">@keys</span>, <span class="property">@confidential</span>, <span class="property">@integrous</span>, <span class="property">@cut</span> = <span class="number">14336</span>) -&gt;
-        <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">this</span> <span class="keyword">instanceof</span> exports.Encrypter
-            <span class="keyword">return</span> <span class="keyword">new</span> exports.Encrypter <span class="property">@keys</span>, <span class="property">@confidential</span>, <span class="property">@integrous</span>, <span class="property">@cut</span>
+            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">exports</span>.<span class="hljs-title">Encrypter</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">stream</span>.<span class="hljs-title">Transform</span></span>
+    <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(<span class="hljs-property">@keys</span>, <span class="hljs-property">@confidential</span>, <span class="hljs-property">@integrous</span>, <span class="hljs-property">@cut</span> = <span class="hljs-number">14336</span>)</span> -&gt;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">exports</span>.Encrypter
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">exports</span>.Encrypter <span class="hljs-property">@keys</span>, <span class="hljs-property">@confidential</span>, <span class="hljs-property">@integrous</span>, <span class="hljs-property">@cut</span>
         
-        stream.Transform.call <span class="keyword">this</span>, objectMode: <span class="literal">true</span>, decodeStrings: <span class="literal">true</span>
-        <span class="property">@leftover</span> = <span class="keyword">new</span> Buffer <span class="number">0</span>
+        stream.Transform.call <span class="hljs-keyword">this</span>, <span class="hljs-attribute">objectMode</span>: <span class="hljs-literal">true</span>, <span class="hljs-attribute">decodeStrings</span>: <span class="hljs-literal">true</span>
+        <span class="hljs-property">@leftover</span> = <span class="hljs-keyword">new</span> Buffer <span class="hljs-number">0</span>
         
-        <span class="keyword">if</span> <span class="property">@confidential</span> <span class="keyword">isnt</span> <span class="literal">true</span> <span class="keyword">and</span> <span class="property">@confidential</span> <span class="keyword">isnt</span> <span class="literal">false</span>
-            <span class="keyword">throw</span> <span class="string">'Confidential must be true or false.'</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-property">@confidential</span> <span class="hljs-keyword">isnt</span> <span class="hljs-literal">true</span> <span class="hljs-keyword">and</span> <span class="hljs-property">@confidential</span> <span class="hljs-keyword">isnt</span> <span class="hljs-literal">false</span>
+            <span class="hljs-keyword">throw</span> <span class="hljs-string">'Confidential must be true or false.'</span>
         
-        <span class="keyword">if</span> <span class="property">@integrous</span>? <span class="keyword">and</span> <span class="property">@integrous</span> <span class="keyword">isnt</span> <span class="string">'sym'</span> <span class="keyword">and</span> <span class="property">@integrous</span> <span class="keyword">isnt</span> <span class="string">'asym'</span>
-            <span class="keyword">throw</span> <span class="string">'Integrous must be null, sym, or asym.'</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-property">@integrous</span>? <span class="hljs-keyword">and</span> <span class="hljs-property">@integrous</span> <span class="hljs-keyword">isnt</span> <span class="hljs-string">'sym'</span> <span class="hljs-keyword">and</span> <span class="hljs-property">@integrous</span> <span class="hljs-keyword">isnt</span> <span class="hljs-string">'asym'</span>
+            <span class="hljs-keyword">throw</span> <span class="hljs-string">'Integrous must be null, sym, or asym.'</span>
         
-        requiresKey = <span class="property">@confidential</span> <span class="keyword">or</span> <span class="property">@integrous</span> <span class="keyword">is</span> <span class="string">'sym'</span>
-        <span class="keyword">if</span> requiresKey <span class="keyword">and</span> <span class="keyword">not</span> <span class="property">@keys</span>.key? <span class="keyword">and</span> <span class="keyword">not</span> <span class="property">@keys</span>.public?
-            <span class="keyword">throw</span> <span class="string">'No symmetric or public key.'</span>
+        requiresKey = <span class="hljs-property">@confidential</span> <span class="hljs-keyword">or</span> <span class="hljs-property">@integrous</span> <span class="hljs-keyword">is</span> <span class="hljs-string">'sym'</span>
+        <span class="hljs-keyword">if</span> requiresKey <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@keys</span>.key? <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@keys</span>.public?
+            <span class="hljs-keyword">throw</span> <span class="hljs-string">'No symmetric or public key.'</span>
         
-        <span class="keyword">if</span> <span class="property">@integrous</span> <span class="keyword">is</span> <span class="string">'asym'</span> <span class="keyword">and</span> <span class="keyword">not</span> <span class="property">@keys</span>.private?
-            <span class="keyword">throw</span> <span class="string">'No private key to sign messages with.'</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-property">@integrous</span> <span class="hljs-keyword">is</span> <span class="hljs-string">'asym'</span> <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@keys</span>.private?
+            <span class="hljs-keyword">throw</span> <span class="hljs-string">'No private key to sign messages with.'</span>
         
-        <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@confidential</span> <span class="keyword">then</span> <span class="property">@buffer</span> = <span class="keyword">new</span> stream.PassThrough()
-        <span class="keyword">else</span> <span class="keyword">if</span> <span class="property">@keys</span>.key?
-            <span class="property">@buffer</span> = crypto.createCipher <span class="string">'aes-256-ctr'</span>, <span class="property">@keys</span>.key
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@confidential</span> <span class="hljs-keyword">then</span> <span class="hljs-property">@buffer</span> = <span class="hljs-keyword">new</span> stream.PassThrough()
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> <span class="hljs-property">@keys</span>.key?
+            <span class="hljs-property">@buffer</span> = crypto.createCipher <span class="hljs-string">'aes-256-ctr'</span>, <span class="hljs-property">@keys</span>.key
     
-    _transform: (dump, encoding, done) -&gt;
-        <span class="keyword">while</span> dump.length <span class="keyword">isnt</span> <span class="number">0</span> <span class="comment"># Chop up dump.</span>
-            len = <span class="keyword">if</span> dump.length &gt; <span class="property">@cut</span> <span class="keyword">then</span> <span class="property">@cut</span> <span class="keyword">else</span> dump.length
-            chunk = <span class="keyword">new</span> Buffer len
+    <span class="hljs-attribute">_transform</span>: <span class="hljs-function"><span class="hljs-params">(dump, encoding, done)</span> -&gt;</span>
+        <span class="hljs-keyword">while</span> dump.length <span class="hljs-keyword">isnt</span> <span class="hljs-number">0</span> <span class="hljs-comment"># Chop up dump.</span>
+            len = <span class="hljs-keyword">if</span> dump.length &gt; <span class="hljs-property">@cut</span> <span class="hljs-keyword">then</span> <span class="hljs-property">@cut</span> <span class="hljs-keyword">else</span> dump.length
+            chunk = <span class="hljs-keyword">new</span> Buffer len
             dump.copy chunk
             dump = dump.slice len
             
-            <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@keys</span>.key? <span class="comment"># Generate random key if needed.</span>
+            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@keys</span>.key? <span class="hljs-comment"># Generate random key if needed.</span>
                 key = keyLib.createRandom()
-                <span class="property">@buffer</span> = crypto.createCipher <span class="string">'aes-256-ctr'</span>, key
-            <span class="keyword">else</span> key = <span class="property">@keys</span>.key
+                <span class="hljs-property">@buffer</span> = crypto.createCipher <span class="hljs-string">'aes-256-ctr'</span>, key
+            <span class="hljs-keyword">else</span> key = <span class="hljs-property">@keys</span>.key
             
-            <span class="property">@buffer</span>.write chunk
-            data = <span class="property">@buffer</span>.read()
+            <span class="hljs-property">@buffer</span>.write chunk
+            data = <span class="hljs-property">@buffer</span>.read()
             footer = {}
             
-            <span class="keyword">if</span> <span class="property">@integrous</span> <span class="keyword">is</span> <span class="string">'sym'</span> <span class="comment"># Calculate HMAC.</span>
-                mac = crypto.createHmac <span class="string">'sha512'</span>, key
+            <span class="hljs-keyword">if</span> <span class="hljs-property">@integrous</span> <span class="hljs-keyword">is</span> <span class="hljs-string">'sym'</span> <span class="hljs-comment"># Calculate HMAC.</span>
+                mac = crypto.createHmac <span class="hljs-string">'sha512'</span>, key
                 mac.end data
                 footer.mac = mac.read().toArray()
             
-            <span class="keyword">if</span> <span class="property">@integrous</span> <span class="keyword">is</span> <span class="string">'asym'</span> <span class="comment"># Calculate signature.</span>
+            <span class="hljs-keyword">if</span> <span class="hljs-property">@integrous</span> <span class="hljs-keyword">is</span> <span class="hljs-string">'asym'</span> <span class="hljs-comment"># Calculate signature.</span>
                 sigs = {}
-                footer.sigs = <span class="keyword">if</span> <span class="property">@keys</span>.private <span class="keyword">instanceof</span> Array <span class="keyword">then</span> [] <span class="keyword">else</span> {}
-                sigs[k] = ursa.createSigner <span class="string">'sha512'</span> <span class="keyword">for</span> k <span class="keyword">of</span> <span class="property">@keys</span>.private
-                sigs[k].update data <span class="keyword">for</span> k <span class="keyword">of</span> <span class="property">@keys</span>.private
-                footer.sigs[k] = sigs[k].sign v <span class="keyword">for</span> k, v <span class="keyword">of</span> <span class="property">@keys</span>.private
-                footer.sigs[k] = v.toArray() <span class="keyword">for</span> k, v <span class="keyword">of</span> footer.sigs
+                footer.sigs = <span class="hljs-keyword">if</span> <span class="hljs-property">@keys</span>.private <span class="hljs-keyword">instanceof</span> Array <span class="hljs-keyword">then</span> [] <span class="hljs-keyword">else</span> {}
+                sigs[k] = ursa.createSigner <span class="hljs-string">'sha512'</span> <span class="hljs-keyword">for</span> k <span class="hljs-keyword">of</span> <span class="hljs-property">@keys</span>.private
+                sigs[k].update data <span class="hljs-keyword">for</span> k <span class="hljs-keyword">of</span> <span class="hljs-property">@keys</span>.private
+                footer.sigs[k] = sigs[k].sign v <span class="hljs-keyword">for</span> k, v <span class="hljs-keyword">of</span> <span class="hljs-property">@keys</span>.private
+                footer.sigs[k] = v.toArray() <span class="hljs-keyword">for</span> k, v <span class="hljs-keyword">of</span> footer.sigs
             
-            <span class="keyword">if</span> <span class="property">@keys</span>.public? <span class="comment"># Calculate keyring.</span>
-                footer.keys = <span class="keyword">if</span> <span class="property">@keys</span>.public <span class="keyword">instanceof</span> Array <span class="keyword">then</span> [] <span class="keyword">else</span> {}
-                footer.keys[k] = v.encrypt key <span class="keyword">for</span> k, v <span class="keyword">of</span> <span class="property">@keys</span>.public
-                footer.keys[k] = v.toArray() <span class="keyword">for</span> k, v <span class="keyword">of</span> footer.keys
+            <span class="hljs-keyword">if</span> <span class="hljs-property">@keys</span>.public? <span class="hljs-comment"># Calculate keyring.</span>
+                footer.keys = <span class="hljs-keyword">if</span> <span class="hljs-property">@keys</span>.public <span class="hljs-keyword">instanceof</span> Array <span class="hljs-keyword">then</span> [] <span class="hljs-keyword">else</span> {}
+                footer.keys[k] = v.encrypt key <span class="hljs-keyword">for</span> k, v <span class="hljs-keyword">of</span> <span class="hljs-property">@keys</span>.public
+                footer.keys[k] = v.toArray() <span class="hljs-keyword">for</span> k, v <span class="hljs-keyword">of</span> footer.keys
             
             footer = msgpack.pack footer
-            out = <span class="keyword">new</span> Buffer <span class="number">4</span> + data.length + footer.length
-            out.writeUInt16BE data.length, <span class="number">0</span>
-            data.copy out, <span class="number">2</span>, <span class="number">0</span>, data.length
-            out.writeUInt16BE footer.length, data.length + <span class="number">2</span>
-            footer.copy out, data.length + <span class="number">4</span>, <span class="number">0</span>, footer.length
+            out = <span class="hljs-keyword">new</span> Buffer <span class="hljs-number">4</span> + data.length + footer.length
+            out.writeUInt16BE data.length, <span class="hljs-number">0</span>
+            data.copy out, <span class="hljs-number">2</span>, <span class="hljs-number">0</span>, data.length
+            out.writeUInt16BE footer.length, data.length + <span class="hljs-number">2</span>
+            footer.copy out, data.length + <span class="hljs-number">4</span>, <span class="hljs-number">0</span>, footer.length
             
-            more = <span class="property">@push</span> out
-            <span class="keyword">if</span> <span class="keyword">not</span> more <span class="keyword">then</span> <span class="keyword">return</span> done()
+            more = <span class="hljs-property">@push</span> out
+            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> more <span class="hljs-keyword">then</span> <span class="hljs-keyword">return</span> done()
         
         done()
     
-    _flush: (done) -&gt;
-        <span class="property">@push</span> <span class="keyword">if</span> <span class="property">@leftover</span>.length <span class="keyword">is</span> <span class="number">0</span> <span class="keyword">then</span> <span class="literal">null</span> <span class="keyword">else</span> <span class="property">@leftover</span>
-        <span class="property">@leftover</span> = <span class="keyword">new</span> Buffer <span class="number">0</span>
+    <span class="hljs-attribute">_flush</span>: <span class="hljs-function"><span class="hljs-params">(done)</span> -&gt;</span>
+        <span class="hljs-property">@push</span> <span class="hljs-keyword">if</span> <span class="hljs-property">@leftover</span>.length <span class="hljs-keyword">is</span> <span class="hljs-number">0</span> <span class="hljs-keyword">then</span> <span class="hljs-literal">null</span> <span class="hljs-keyword">else</span> <span class="hljs-property">@leftover</span>
+        <span class="hljs-property">@leftover</span> = <span class="hljs-keyword">new</span> Buffer <span class="hljs-number">0</span>
         done()</pre></div></div>
             
         </li>
@@ -219,132 +219,132 @@ If you get strange errors, try lowering this below the default.  <em>(Number)</e
 <li><code>key</code> - A random symmetric key, usually through
 <code>caesar.key.createRandom()</code>.  If present, this key will be used on all
 messages.  If not present, a keyring must be present to decrypt messages.</li>
-<li><code>public</code> - An array or hash of public keys.  If a hash, the key&#39;s owner
+<li><code>public</code> - An array or hash of public keys.  If a hash, the key’s owner
 can be identified easier.  If present, they will be used to verify
 signatures.</li>
-<li><code>private</code> - An array or hash of private keys.  If a hash, the key&#39;s owner 
+<li><code>private</code> - An array or hash of private keys.  If a hash, the key’s owner 
 can be identified easier.  If present, they will be used to derive
 symmetric keys from a keyring.</li>
 </ul>
 </li>
 <li><code>confidential</code> is whether or not the data should be encrypted to prevent
-eavesdropping.  Must match the Encrypter&#39;s value.  <em>(Boolean)</em></li>
+eavesdropping.  Must match the Encrypter’s value.  <em>(Boolean)</em></li>
 <li><code>integrous</code> is the type of integrity that should be maintained.  Can be
-null (no integrity), &quot;sym&quot; (symmetric integrity, verifiable by others with
-the secret key), and &quot;asym&quot; (asymmetric integrity, verifiable by anyone).
-Must match the Encrypter&#39;s value.  <em>(String)</em></li>
+null (no integrity), “sym” (symmetric integrity, verifiable by others with
+the secret key), and “asym” (asymmetric integrity, verifiable by anyone).
+Must match the Encrypter’s value.  <em>(String)</em></li>
 </ol>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">exports</span>.<span class="title">Decrypter</span> <span class="keyword">extends</span> <span class="title">stream</span>.<span class="title">Transform</span></span>
-    constructor: (<span class="property">@keys</span>, <span class="property">@confidential</span>, <span class="property">@integrous</span>) -&gt;
-        <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">this</span> <span class="keyword">instanceof</span> exports.Decrypter
-            <span class="keyword">return</span> <span class="keyword">new</span> exports.Decrypter <span class="property">@keys</span>, <span class="property">@confidential</span>, <span class="property">@integrous</span>
+            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">exports</span>.<span class="hljs-title">Decrypter</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">stream</span>.<span class="hljs-title">Transform</span></span>
+    <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(<span class="hljs-property">@keys</span>, <span class="hljs-property">@confidential</span>, <span class="hljs-property">@integrous</span>)</span> -&gt;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">exports</span>.Decrypter
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">exports</span>.Decrypter <span class="hljs-property">@keys</span>, <span class="hljs-property">@confidential</span>, <span class="hljs-property">@integrous</span>
         
-        stream.Transform.call <span class="keyword">this</span>, decodeStrings: <span class="literal">true</span>
+        stream.Transform.call <span class="hljs-keyword">this</span>, <span class="hljs-attribute">decodeStrings</span>: <span class="hljs-literal">true</span>
         
-        <span class="keyword">if</span> <span class="property">@confidential</span> <span class="keyword">isnt</span> <span class="literal">true</span> <span class="keyword">and</span> <span class="property">@confidential</span> <span class="keyword">isnt</span> <span class="literal">false</span>
-            <span class="keyword">throw</span> <span class="string">'Confidential must be true or false.'</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-property">@confidential</span> <span class="hljs-keyword">isnt</span> <span class="hljs-literal">true</span> <span class="hljs-keyword">and</span> <span class="hljs-property">@confidential</span> <span class="hljs-keyword">isnt</span> <span class="hljs-literal">false</span>
+            <span class="hljs-keyword">throw</span> <span class="hljs-string">'Confidential must be true or false.'</span>
         
-        <span class="keyword">if</span> <span class="property">@integrous</span>? <span class="keyword">and</span> <span class="property">@integrous</span> <span class="keyword">isnt</span> <span class="string">'sym'</span> <span class="keyword">and</span> <span class="property">@integrous</span> <span class="keyword">isnt</span> <span class="string">'asym'</span>
-            <span class="keyword">throw</span> <span class="string">'Integrous must be null, sym, or asym.'</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-property">@integrous</span>? <span class="hljs-keyword">and</span> <span class="hljs-property">@integrous</span> <span class="hljs-keyword">isnt</span> <span class="hljs-string">'sym'</span> <span class="hljs-keyword">and</span> <span class="hljs-property">@integrous</span> <span class="hljs-keyword">isnt</span> <span class="hljs-string">'asym'</span>
+            <span class="hljs-keyword">throw</span> <span class="hljs-string">'Integrous must be null, sym, or asym.'</span>
         
-        requiresKey = <span class="property">@confidential</span> <span class="keyword">or</span> <span class="property">@integrous</span> <span class="keyword">is</span> <span class="string">'sym'</span>
-        <span class="keyword">if</span> requiresKey <span class="keyword">and</span> <span class="keyword">not</span> <span class="property">@keys</span>.key? <span class="keyword">and</span> <span class="keyword">not</span> <span class="property">@keys</span>.private?
-            <span class="keyword">throw</span> <span class="string">'No symmetric or private key.'</span>
+        requiresKey = <span class="hljs-property">@confidential</span> <span class="hljs-keyword">or</span> <span class="hljs-property">@integrous</span> <span class="hljs-keyword">is</span> <span class="hljs-string">'sym'</span>
+        <span class="hljs-keyword">if</span> requiresKey <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@keys</span>.key? <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@keys</span>.private?
+            <span class="hljs-keyword">throw</span> <span class="hljs-string">'No symmetric or private key.'</span>
         
-        <span class="keyword">if</span> <span class="property">@keys</span>.key? <span class="keyword">and</span> <span class="property">@confidential</span>
-            <span class="property">@cipher</span> = crypto.createDecipher <span class="string">'aes-256-ctr'</span>, <span class="property">@keys</span>.key
-        <span class="keyword">else</span> <span class="property">@cipher</span> = <span class="keyword">new</span> stream.PassThrough()
+        <span class="hljs-keyword">if</span> <span class="hljs-property">@keys</span>.key? <span class="hljs-keyword">and</span> <span class="hljs-property">@confidential</span>
+            <span class="hljs-property">@cipher</span> = crypto.createDecipher <span class="hljs-string">'aes-256-ctr'</span>, <span class="hljs-property">@keys</span>.key
+        <span class="hljs-keyword">else</span> <span class="hljs-property">@cipher</span> = <span class="hljs-keyword">new</span> stream.PassThrough()
     
-    _transform: (chunk, encoding, done) -&gt;
-        dlen = chunk.readUInt16BE <span class="number">0</span>
-        data = chunk.slice <span class="number">2</span>, <span class="number">2</span> + dlen
+    <span class="hljs-attribute">_transform</span>: <span class="hljs-function"><span class="hljs-params">(chunk, encoding, done)</span> -&gt;</span>
+        dlen = chunk.readUInt16BE <span class="hljs-number">0</span>
+        data = chunk.slice <span class="hljs-number">2</span>, <span class="hljs-number">2</span> + dlen
         
-        flen = chunk.readUInt16BE <span class="number">2</span> + dlen
-        footer = msgpack.unpack chunk.slice <span class="number">4</span> + dlen
+        flen = chunk.readUInt16BE <span class="hljs-number">2</span> + dlen
+        footer = msgpack.unpack chunk.slice <span class="hljs-number">4</span> + dlen
         
-        <span class="keyword">if</span> <span class="keyword">not</span> data? <span class="keyword">then</span> <span class="keyword">return</span> done <span class="string">'No payload.'</span>
-        <span class="keyword">if</span> <span class="keyword">not</span> footer.mac? <span class="keyword">and</span> <span class="property">@integrous</span> <span class="keyword">is</span> <span class="string">'sym'</span> <span class="keyword">then</span> <span class="keyword">return</span> done <span class="string">'No MAC.'</span>
-        <span class="keyword">if</span> <span class="keyword">not</span> footer.sigs? <span class="keyword">and</span> <span class="property">@integrous</span> <span class="keyword">is</span> <span class="string">'asym'</span> <span class="keyword">then</span> <span class="keyword">return</span> done <span class="string">'No sigs.'</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> data? <span class="hljs-keyword">then</span> <span class="hljs-keyword">return</span> done <span class="hljs-string">'No payload.'</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> footer.mac? <span class="hljs-keyword">and</span> <span class="hljs-property">@integrous</span> <span class="hljs-keyword">is</span> <span class="hljs-string">'sym'</span> <span class="hljs-keyword">then</span> <span class="hljs-keyword">return</span> done <span class="hljs-string">'No MAC.'</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> footer.sigs? <span class="hljs-keyword">and</span> <span class="hljs-property">@integrous</span> <span class="hljs-keyword">is</span> <span class="hljs-string">'asym'</span> <span class="hljs-keyword">then</span> <span class="hljs-keyword">return</span> done <span class="hljs-string">'No sigs.'</span>
         
-        requiresKey = <span class="property">@confidential</span> <span class="keyword">or</span> <span class="property">@integrous</span> <span class="keyword">is</span> <span class="string">'sym'</span>
-        <span class="keyword">if</span> requiresKey <span class="keyword">and</span> <span class="keyword">not</span> <span class="property">@keys</span>.key? <span class="keyword">and</span> <span class="keyword">not</span> footer.keys?
-            <span class="keyword">return</span> done <span class="string">'No method of key derivation.'</span>
+        requiresKey = <span class="hljs-property">@confidential</span> <span class="hljs-keyword">or</span> <span class="hljs-property">@integrous</span> <span class="hljs-keyword">is</span> <span class="hljs-string">'sym'</span>
+        <span class="hljs-keyword">if</span> requiresKey <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@keys</span>.key? <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> footer.keys?
+            <span class="hljs-keyword">return</span> done <span class="hljs-string">'No method of key derivation.'</span>
         
-        key = <span class="literal">null</span>
-        <span class="keyword">if</span> <span class="property">@keys</span>.key? <span class="comment"># Derive key if needed.</span>
-            key = <span class="property">@keys</span>.key
-        <span class="keyword">else</span>
-            <span class="keyword">if</span> footer.keys <span class="keyword">instanceof</span> Array
-                <span class="keyword">for</span> tag <span class="keyword">in</span> footer.keys
-                    <span class="keyword">for</span> n, privKey <span class="keyword">of</span> <span class="property">@keys</span>.private
-                        <span class="keyword">try</span> key = privKey.decrypt tag
-                        <span class="keyword">catch</span> err <span class="keyword">then</span> key = <span class="literal">null</span>
+        key = <span class="hljs-literal">null</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-property">@keys</span>.key? <span class="hljs-comment"># Derive key if needed.</span>
+            key = <span class="hljs-property">@keys</span>.key
+        <span class="hljs-keyword">else</span>
+            <span class="hljs-keyword">if</span> footer.keys <span class="hljs-keyword">instanceof</span> Array
+                <span class="hljs-keyword">for</span> tag <span class="hljs-keyword">in</span> footer.keys
+                    <span class="hljs-keyword">for</span> n, privKey <span class="hljs-keyword">of</span> <span class="hljs-property">@keys</span>.private
+                        <span class="hljs-keyword">try</span> key = privKey.decrypt tag
+                        <span class="hljs-keyword">catch</span> err <span class="hljs-keyword">then</span> key = <span class="hljs-literal">null</span>
                         
-                        <span class="keyword">if</span> key? <span class="keyword">then</span> <span class="keyword">break</span>
+                        <span class="hljs-keyword">if</span> key? <span class="hljs-keyword">then</span> <span class="hljs-keyword">break</span>
                     
-                    <span class="keyword">if</span> key? <span class="keyword">then</span> <span class="keyword">break</span>
-            <span class="keyword">else</span>
-                keys = (key <span class="keyword">for</span> key <span class="keyword">of</span> <span class="property">@keys</span>.private <span class="keyword">when</span> footer.keys[key]?)
-                <span class="keyword">if</span> keys.length <span class="keyword">is</span> <span class="number">0</span>
-                    <span class="keyword">return</span> done <span class="string">'No valid keys for decryption.'</span>
+                    <span class="hljs-keyword">if</span> key? <span class="hljs-keyword">then</span> <span class="hljs-keyword">break</span>
+            <span class="hljs-keyword">else</span>
+                keys = (key <span class="hljs-keyword">for</span> key <span class="hljs-keyword">of</span> <span class="hljs-property">@keys</span>.private <span class="hljs-keyword">when</span> footer.keys[key]?)
+                <span class="hljs-keyword">if</span> keys.length <span class="hljs-keyword">is</span> <span class="hljs-number">0</span>
+                    <span class="hljs-keyword">return</span> done <span class="hljs-string">'No valid keys for decryption.'</span>
                 
-                <span class="keyword">for</span> k <span class="keyword">in</span> keys
-                    <span class="keyword">try</span> key = <span class="property">@keys</span>.private[k].decrypt <span class="keyword">new</span> Buffer footer.keys[k]
-                    <span class="keyword">catch</span> err <span class="keyword">then</span> key = <span class="literal">null</span>
+                <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> keys
+                    <span class="hljs-keyword">try</span> key = <span class="hljs-property">@keys</span>.private[k].decrypt <span class="hljs-keyword">new</span> Buffer footer.keys[k]
+                    <span class="hljs-keyword">catch</span> err <span class="hljs-keyword">then</span> key = <span class="hljs-literal">null</span>
                     
-                    <span class="keyword">if</span> key? <span class="keyword">then</span> <span class="keyword">break</span>
+                    <span class="hljs-keyword">if</span> key? <span class="hljs-keyword">then</span> <span class="hljs-keyword">break</span>
         
-        <span class="keyword">if</span> <span class="keyword">not</span> key? <span class="keyword">then</span> <span class="keyword">return</span> done <span class="string">'No key was successfully derived.'</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> key? <span class="hljs-keyword">then</span> <span class="hljs-keyword">return</span> done <span class="hljs-string">'No key was successfully derived.'</span>
         
-        <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@keys</span>.key? <span class="comment"># Intialize new cipher if needed.</span>
-            <span class="property">@cipher</span> = crypto.createDecipher <span class="string">'aes-256-ctr'</span>, key
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@keys</span>.key? <span class="hljs-comment"># Intialize new cipher if needed.</span>
+            <span class="hljs-property">@cipher</span> = crypto.createDecipher <span class="hljs-string">'aes-256-ctr'</span>, key
         
-        <span class="keyword">if</span> <span class="property">@integrous</span> <span class="keyword">is</span> <span class="string">'sym'</span> <span class="comment"># Verify an HMAC.</span>
-            mac = crypto.createHmac <span class="string">'sha512'</span>, key
-            mac.end <span class="keyword">new</span> Buffer footer.mac
-            candidateTag = mac.read().toString <span class="string">'base64'</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-property">@integrous</span> <span class="hljs-keyword">is</span> <span class="hljs-string">'sym'</span> <span class="hljs-comment"># Verify an HMAC.</span>
+            mac = crypto.createHmac <span class="hljs-string">'sha512'</span>, key
+            mac.end <span class="hljs-keyword">new</span> Buffer footer.mac
+            candidateTag = mac.read().toString <span class="hljs-string">'base64'</span>
             
-            mac = crypto.createHmac <span class="string">'sha512'</span>, key
+            mac = crypto.createHmac <span class="hljs-string">'sha512'</span>, key
             mac.end data
             tag = mac.read()
             
-            mac = crypto.createHmac <span class="string">'sha512'</span>, key
+            mac = crypto.createHmac <span class="hljs-string">'sha512'</span>, key
             mac.end tag
-            tag = mac.read().toString <span class="string">'base64'</span>
+            tag = mac.read().toString <span class="hljs-string">'base64'</span>
             
-            <span class="keyword">if</span> candidateTag <span class="keyword">isnt</span> tag <span class="keyword">then</span> <span class="keyword">return</span> done <span class="string">'Bad MAC.'</span>
+            <span class="hljs-keyword">if</span> candidateTag <span class="hljs-keyword">isnt</span> tag <span class="hljs-keyword">then</span> <span class="hljs-keyword">return</span> done <span class="hljs-string">'Bad MAC.'</span>
         
-        <span class="keyword">if</span> <span class="property">@integrous</span> <span class="keyword">is</span> <span class="string">'asym'</span> <span class="comment"># Verify a signature.</span>
-            ok = <span class="literal">false</span>
-            <span class="keyword">if</span> footer.sigs <span class="keyword">instanceof</span> Array
-                <span class="keyword">for</span> sig <span class="keyword">in</span> footer.sigs
-                    sig = <span class="keyword">new</span> Buffer sig
-                    <span class="keyword">for</span> pubKey <span class="keyword">in</span> <span class="property">@keys</span>.public
-                        v = ursa.createVerifier <span class="string">'sha512'</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-property">@integrous</span> <span class="hljs-keyword">is</span> <span class="hljs-string">'asym'</span> <span class="hljs-comment"># Verify a signature.</span>
+            ok = <span class="hljs-literal">false</span>
+            <span class="hljs-keyword">if</span> footer.sigs <span class="hljs-keyword">instanceof</span> Array
+                <span class="hljs-keyword">for</span> sig <span class="hljs-keyword">in</span> footer.sigs
+                    sig = <span class="hljs-keyword">new</span> Buffer sig
+                    <span class="hljs-keyword">for</span> pubKey <span class="hljs-keyword">in</span> <span class="hljs-property">@keys</span>.public
+                        v = ursa.createVerifier <span class="hljs-string">'sha512'</span>
                         v.update data
-                        ok = v.verify pubKey, sig, <span class="string">'base64'</span>
-                        <span class="keyword">if</span> ok <span class="keyword">then</span> <span class="keyword">break</span>
+                        ok = v.verify pubKey, sig, <span class="hljs-string">'base64'</span>
+                        <span class="hljs-keyword">if</span> ok <span class="hljs-keyword">then</span> <span class="hljs-keyword">break</span>
                     
-                    <span class="keyword">if</span> ok <span class="keyword">then</span> <span class="keyword">break</span>
-            <span class="keyword">else</span>
-                keys = (key <span class="keyword">for</span> key <span class="keyword">of</span> <span class="property">@keys</span>.public <span class="keyword">when</span> footer.sigs[key]?)
-                <span class="keyword">if</span> keys.length <span class="keyword">is</span> <span class="number">0</span> <span class="keyword">then</span> <span class="keyword">return</span> done <span class="string">'No valid keys for auth.'</span>
+                    <span class="hljs-keyword">if</span> ok <span class="hljs-keyword">then</span> <span class="hljs-keyword">break</span>
+            <span class="hljs-keyword">else</span>
+                keys = (key <span class="hljs-keyword">for</span> key <span class="hljs-keyword">of</span> <span class="hljs-property">@keys</span>.public <span class="hljs-keyword">when</span> footer.sigs[key]?)
+                <span class="hljs-keyword">if</span> keys.length <span class="hljs-keyword">is</span> <span class="hljs-number">0</span> <span class="hljs-keyword">then</span> <span class="hljs-keyword">return</span> done <span class="hljs-string">'No valid keys for auth.'</span>
                 
-                <span class="keyword">for</span> k <span class="keyword">in</span> keys
-                    <span class="keyword">try</span>
-                        v = ursa.createVerifier <span class="string">'sha512'</span>
+                <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> keys
+                    <span class="hljs-keyword">try</span>
+                        v = ursa.createVerifier <span class="hljs-string">'sha512'</span>
                         v.update data
-                        ok = v.verify <span class="property">@keys</span>.public[k], <span class="keyword">new</span> Buffer footer.sigs[k]
-                        <span class="keyword">if</span> ok <span class="keyword">then</span> <span class="keyword">break</span>
-                    <span class="keyword">catch</span> e
+                        ok = v.verify <span class="hljs-property">@keys</span>.public[k], <span class="hljs-keyword">new</span> Buffer footer.sigs[k]
+                        <span class="hljs-keyword">if</span> ok <span class="hljs-keyword">then</span> <span class="hljs-keyword">break</span>
+                    <span class="hljs-keyword">catch</span> e
             
-            <span class="keyword">if</span> <span class="keyword">not</span> ok <span class="keyword">then</span> <span class="keyword">return</span> done <span class="string">'Bad signature.'</span>
+            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> ok <span class="hljs-keyword">then</span> <span class="hljs-keyword">return</span> done <span class="hljs-string">'Bad signature.'</span>
         
-        <span class="property">@cipher</span>.write data <span class="comment"># Decrypt the message.</span>
-        <span class="property">@push</span> <span class="property">@cipher</span>.read()
+        <span class="hljs-property">@cipher</span>.write data <span class="hljs-comment"># Decrypt the message.</span>
+        <span class="hljs-property">@push</span> <span class="hljs-property">@cipher</span>.read()
         done()</pre></div></div>
             
         </li>
@@ -371,40 +371,40 @@ user ids, usernames, or randomly generated keys).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">exports</span>.<span class="title">SIVEncrypter</span> <span class="keyword">extends</span> <span class="title">stream</span>.<span class="title">Transform</span></span>
-    constructor: (<span class="property">@key1</span>, <span class="property">@key2</span>) -&gt;
-        <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">this</span> <span class="keyword">instanceof</span> exports.SIVEncrypter
-            <span class="keyword">return</span> <span class="keyword">new</span> exports.SIVEncrypter <span class="property">@key1</span>, <span class="property">@key2</span>
+            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">exports</span>.<span class="hljs-title">SIVEncrypter</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">stream</span>.<span class="hljs-title">Transform</span></span>
+    <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(<span class="hljs-property">@key1</span>, <span class="hljs-property">@key2</span>)</span> -&gt;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">exports</span>.SIVEncrypter
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">exports</span>.SIVEncrypter <span class="hljs-property">@key1</span>, <span class="hljs-property">@key2</span>
         
-        stream.Transform.call <span class="keyword">this</span>, objectMode: <span class="literal">true</span>, decodeStrings: <span class="literal">true</span>
-        <span class="property">@leftover</span> = <span class="keyword">new</span> Buffer <span class="number">0</span>
+        stream.Transform.call <span class="hljs-keyword">this</span>, <span class="hljs-attribute">objectMode</span>: <span class="hljs-literal">true</span>, <span class="hljs-attribute">decodeStrings</span>: <span class="hljs-literal">true</span>
+        <span class="hljs-property">@leftover</span> = <span class="hljs-keyword">new</span> Buffer <span class="hljs-number">0</span>
     
-    _transform: (dump, encoding, done) -&gt;
-        <span class="keyword">while</span> dump.length <span class="keyword">isnt</span> <span class="number">0</span> <span class="comment"># Chop up dump.</span>
-            len = <span class="keyword">if</span> dump.length &gt; <span class="number">16368</span> <span class="keyword">then</span> <span class="number">16368</span> <span class="keyword">else</span> dump.length
-            chunk = <span class="keyword">new</span> Buffer len
+    <span class="hljs-attribute">_transform</span>: <span class="hljs-function"><span class="hljs-params">(dump, encoding, done)</span> -&gt;</span>
+        <span class="hljs-keyword">while</span> dump.length <span class="hljs-keyword">isnt</span> <span class="hljs-number">0</span> <span class="hljs-comment"># Chop up dump.</span>
+            len = <span class="hljs-keyword">if</span> dump.length &gt; <span class="hljs-number">16368</span> <span class="hljs-keyword">then</span> <span class="hljs-number">16368</span> <span class="hljs-keyword">else</span> dump.length
+            chunk = <span class="hljs-keyword">new</span> Buffer len
             dump.copy chunk
             dump = dump.slice len
             
-            hash = crypto.createHash <span class="string">'sha256'</span> <span class="comment"># Calculate IV.</span>
+            hash = crypto.createHash <span class="hljs-string">'sha256'</span> <span class="hljs-comment"># Calculate IV.</span>
             hash.end chunk
             tag = hash.read()
             
-            temp = crypto.createCipher <span class="string">'aes-256-ctr'</span>, <span class="property">@key1</span>
+            temp = crypto.createCipher <span class="hljs-string">'aes-256-ctr'</span>, <span class="hljs-property">@key1</span>
             temp.end tag
-            iv = temp.read().slice <span class="number">0</span>, <span class="number">16</span>
+            iv = temp.read().slice <span class="hljs-number">0</span>, <span class="hljs-number">16</span>
             
-            cipher = crypto.createCipheriv <span class="string">'aes-256-ctr'</span>, <span class="property">@key2</span>, iv <span class="comment"># Encrypt.</span>
+            cipher = crypto.createCipheriv <span class="hljs-string">'aes-256-ctr'</span>, <span class="hljs-property">@key2</span>, iv <span class="hljs-comment"># Encrypt.</span>
             cipher.end chunk
             end = Buffer.concat [iv, cipher.read()]
-            more = <span class="property">@push</span> end
-            <span class="keyword">if</span> <span class="keyword">not</span> more <span class="keyword">then</span> <span class="keyword">return</span> done()
+            more = <span class="hljs-property">@push</span> end
+            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> more <span class="hljs-keyword">then</span> <span class="hljs-keyword">return</span> done()
         
         done()
     
-    _flush: (done) -&gt;
-        <span class="property">@push</span> <span class="keyword">if</span> <span class="property">@leftover</span>.length <span class="keyword">is</span> <span class="number">0</span> <span class="keyword">then</span> <span class="literal">null</span> <span class="keyword">else</span> <span class="property">@leftover</span>
-        <span class="property">@leftover</span> = <span class="keyword">new</span> Buffer <span class="number">0</span>
+    <span class="hljs-attribute">_flush</span>: <span class="hljs-function"><span class="hljs-params">(done)</span> -&gt;</span>
+        <span class="hljs-property">@push</span> <span class="hljs-keyword">if</span> <span class="hljs-property">@leftover</span>.length <span class="hljs-keyword">is</span> <span class="hljs-number">0</span> <span class="hljs-keyword">then</span> <span class="hljs-literal">null</span> <span class="hljs-keyword">else</span> <span class="hljs-property">@leftover</span>
+        <span class="hljs-property">@leftover</span> = <span class="hljs-keyword">new</span> Buffer <span class="hljs-number">0</span>
         done()</pre></div></div>
             
         </li>
@@ -420,33 +420,33 @@ user ids, usernames, or randomly generated keys).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">exports</span>.<span class="title">SIVDecrypter</span> <span class="keyword">extends</span> <span class="title">stream</span>.<span class="title">Transform</span></span>
-    constructor: (<span class="property">@key1</span>, <span class="property">@key2</span>) -&gt;
-        <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">this</span> <span class="keyword">instanceof</span> exports.SIVDecrypter
-            <span class="keyword">return</span> <span class="keyword">new</span> exports.SIVDecrypter <span class="property">@key1</span>, <span class="property">@key2</span>
+            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">exports</span>.<span class="hljs-title">SIVDecrypter</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">stream</span>.<span class="hljs-title">Transform</span></span>
+    <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(<span class="hljs-property">@key1</span>, <span class="hljs-property">@key2</span>)</span> -&gt;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">exports</span>.SIVDecrypter
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">exports</span>.SIVDecrypter <span class="hljs-property">@key1</span>, <span class="hljs-property">@key2</span>
         
-        stream.Transform.call <span class="keyword">this</span>, decodeStrings: <span class="literal">true</span>
+        stream.Transform.call <span class="hljs-keyword">this</span>, <span class="hljs-attribute">decodeStrings</span>: <span class="hljs-literal">true</span>
     
-    _transform: (chunk, encoding, done) -&gt;
-        iv = chunk.slice <span class="number">0</span>, <span class="number">16</span>
-        data = chunk.slice <span class="number">16</span>
+    <span class="hljs-attribute">_transform</span>: <span class="hljs-function"><span class="hljs-params">(chunk, encoding, done)</span> -&gt;</span>
+        iv = chunk.slice <span class="hljs-number">0</span>, <span class="hljs-number">16</span>
+        data = chunk.slice <span class="hljs-number">16</span>
         
-        decipher = crypto.createDecipheriv <span class="string">'aes-256-ctr'</span>, <span class="property">@key2</span>, iv <span class="comment"># Decrypt</span>
+        decipher = crypto.createDecipheriv <span class="hljs-string">'aes-256-ctr'</span>, <span class="hljs-property">@key2</span>, iv <span class="hljs-comment"># Decrypt</span>
         decipher.end data
         pt = decipher.read()
         
-        hash = crypto.createHash <span class="string">'sha256'</span> <span class="comment"># Authenticate by calculating IV</span>
+        hash = crypto.createHash <span class="hljs-string">'sha256'</span> <span class="hljs-comment"># Authenticate by calculating IV</span>
         hash.end pt
         tag = hash.read()
         
-        temp = crypto.createCipher <span class="string">'aes-256-ctr'</span>, <span class="property">@key1</span>
+        temp = crypto.createCipher <span class="hljs-string">'aes-256-ctr'</span>, <span class="hljs-property">@key1</span>
         temp.end tag
-        ivCand = temp.read().slice <span class="number">0</span>, <span class="number">16</span>
+        ivCand = temp.read().slice <span class="hljs-number">0</span>, <span class="hljs-number">16</span>
         
-        <span class="keyword">if</span> iv.toString(<span class="string">'base64'</span>) <span class="keyword">isnt</span> ivCand.toString(<span class="string">'base64'</span>)
-            <span class="keyword">return</span> done <span class="string">'Failed auth.'</span>
+        <span class="hljs-keyword">if</span> iv.toString(<span class="hljs-string">'base64'</span>) <span class="hljs-keyword">isnt</span> ivCand.toString(<span class="hljs-string">'base64'</span>)
+            <span class="hljs-keyword">return</span> done <span class="hljs-string">'Failed auth.'</span>
         
-        <span class="property">@push</span> pt
+        <span class="hljs-property">@push</span> pt
         done()</pre></div></div>
             
         </li>
@@ -472,22 +472,22 @@ not divisible by the cut then 0x00s are appended.</li>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">exports</span>.<span class="title">XTSEncrypter</span> <span class="keyword">extends</span> <span class="title">stream</span>.<span class="title">Transform</span></span>
-    constructor: (<span class="property">@key</span>, <span class="property">@cut</span> = <span class="number">32</span>) -&gt;
-        <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">this</span> <span class="keyword">instanceof</span> exports.XTSEncrypter
-            <span class="keyword">return</span> <span class="keyword">new</span> exports.XTSEncrypter <span class="property">@key</span>, <span class="property">@cut</span>
+            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">exports</span>.<span class="hljs-title">XTSEncrypter</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">stream</span>.<span class="hljs-title">Transform</span></span>
+    <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(<span class="hljs-property">@key</span>, <span class="hljs-property">@cut</span> = <span class="hljs-number">32</span>)</span> -&gt;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">exports</span>.XTSEncrypter
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">exports</span>.XTSEncrypter <span class="hljs-property">@key</span>, <span class="hljs-property">@cut</span>
         
-        stream.Transform.call <span class="keyword">this</span>, decodeStrings: <span class="literal">true</span>
-        <span class="property">@cipher</span> = crypto.createCipher <span class="string">'aes-256-xts'</span>, <span class="property">@key</span>
+        stream.Transform.call <span class="hljs-keyword">this</span>, <span class="hljs-attribute">decodeStrings</span>: <span class="hljs-literal">true</span>
+        <span class="hljs-property">@cipher</span> = crypto.createCipher <span class="hljs-string">'aes-256-xts'</span>, <span class="hljs-property">@key</span>
     
-    _transform: (dump, encoding, done) -&gt;
-        <span class="keyword">while</span> dump.length <span class="keyword">isnt</span> <span class="number">0</span> <span class="comment"># Chop up dump.</span>
-            chunk = <span class="keyword">new</span> Buffer <span class="property">@cut</span>
+    <span class="hljs-attribute">_transform</span>: <span class="hljs-function"><span class="hljs-params">(dump, encoding, done)</span> -&gt;</span>
+        <span class="hljs-keyword">while</span> dump.length <span class="hljs-keyword">isnt</span> <span class="hljs-number">0</span> <span class="hljs-comment"># Chop up dump.</span>
+            chunk = <span class="hljs-keyword">new</span> Buffer <span class="hljs-property">@cut</span>
             dump.copy chunk
-            dump = dump.slice <span class="property">@cut</span>
+            dump = dump.slice <span class="hljs-property">@cut</span>
             
-            <span class="property">@cipher</span>.write chunk
-            <span class="property">@push</span> <span class="property">@cipher</span>.read()
+            <span class="hljs-property">@cipher</span>.write chunk
+            <span class="hljs-property">@push</span> <span class="hljs-property">@cipher</span>.read()
         
         done()</pre></div></div>
             
@@ -504,22 +504,22 @@ not divisible by the cut then 0x00s are appended.</li>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">exports</span>.<span class="title">XTSDecrypter</span> <span class="keyword">extends</span> <span class="title">stream</span>.<span class="title">Transform</span></span>
-    constructor: (<span class="property">@key</span>, <span class="property">@cut</span> = <span class="number">32</span>) -&gt;
-        <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">this</span> <span class="keyword">instanceof</span> exports.XTSDecrypter
-            <span class="keyword">return</span> <span class="keyword">new</span> exports.XTSDecrypter <span class="property">@key</span>
+            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">exports</span>.<span class="hljs-title">XTSDecrypter</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">stream</span>.<span class="hljs-title">Transform</span></span>
+    <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(<span class="hljs-property">@key</span>, <span class="hljs-property">@cut</span> = <span class="hljs-number">32</span>)</span> -&gt;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">exports</span>.XTSDecrypter
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">exports</span>.XTSDecrypter <span class="hljs-property">@key</span>
         
-        stream.Transform.call <span class="keyword">this</span>, decodeStrings: <span class="literal">true</span>
-        <span class="property">@decipher</span> = crypto.createDecipher <span class="string">'aes-256-xts'</span>, <span class="property">@key</span>
+        stream.Transform.call <span class="hljs-keyword">this</span>, <span class="hljs-attribute">decodeStrings</span>: <span class="hljs-literal">true</span>
+        <span class="hljs-property">@decipher</span> = crypto.createDecipher <span class="hljs-string">'aes-256-xts'</span>, <span class="hljs-property">@key</span>
     
-    _transform: (dump, encoding, done) -&gt;
-        <span class="keyword">while</span> dump.length <span class="keyword">isnt</span> <span class="number">0</span> <span class="comment"># Chop up dump.</span>
-            chunk = <span class="keyword">new</span> Buffer <span class="property">@cut</span>
+    <span class="hljs-attribute">_transform</span>: <span class="hljs-function"><span class="hljs-params">(dump, encoding, done)</span> -&gt;</span>
+        <span class="hljs-keyword">while</span> dump.length <span class="hljs-keyword">isnt</span> <span class="hljs-number">0</span> <span class="hljs-comment"># Chop up dump.</span>
+            chunk = <span class="hljs-keyword">new</span> Buffer <span class="hljs-property">@cut</span>
             dump.copy chunk
-            dump = dump.slice <span class="property">@cut</span>
+            dump = dump.slice <span class="hljs-property">@cut</span>
             
-            <span class="property">@decipher</span>.write chunk
-            <span class="property">@push</span> <span class="property">@decipher</span>.read()
+            <span class="hljs-property">@decipher</span>.write chunk
+            <span class="hljs-property">@push</span> <span class="hljs-property">@decipher</span>.read()
         
         done()</pre></div></div>
             

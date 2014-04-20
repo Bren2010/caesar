@@ -2,6 +2,9 @@
 
 An easy-to-use advanced cryptography library that lets you focus on writing applications that process data, not encrypted data.
 
+- **Examples:**  https://github.com/Bren2010/caesar/tree/master/examples
+- **Documentation:**  http://bren2010.github.io/caesar/
+
 ### Install
 ```bash
 npm install caesar

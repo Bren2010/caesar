@@ -85,9 +85,9 @@ same key.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>crypto = require <span class="string">'crypto'</span>
-{BigDecimal} = require <span class="string">'bigdecimal'</span>
-{BigInteger} = require <span class="string">'bigdecimal'</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>crypto = <span class="hljs-built_in">require</span> <span class="hljs-string">'crypto'</span>
+{BigDecimal} = <span class="hljs-built_in">require</span> <span class="hljs-string">'bigdecimal'</span>
+{BigInteger} = <span class="hljs-built_in">require</span> <span class="hljs-string">'bigdecimal'</span></pre></div></div>
             
         </li>
         
@@ -107,45 +107,45 @@ same key.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>exports.<span class="function"><span class="title">encrypt</span></span> = (key, num) -&gt;
-    top = <span class="number">131072</span>
-    cursor = <span class="number">65536</span>
-    bottom = <span class="number">0</span>
+            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">exports</span>.<span class="hljs-function"><span class="hljs-title">encrypt</span> = <span class="hljs-params">(key, num)</span> -&gt;</span>
+    top = <span class="hljs-number">131072</span>
+    cursor = <span class="hljs-number">65536</span>
+    bottom = <span class="hljs-number">0</span>
     
-    <span class="keyword">while</span> <span class="literal">true</span> <span class="comment"># Narrow search down.</span>
-        k = rhyper key, <span class="number">65536</span>, <span class="number">65536</span>, cursor
+    <span class="hljs-keyword">while</span> <span class="hljs-literal">true</span> <span class="hljs-comment"># Narrow search down.</span>
+        k = rhyper key, <span class="hljs-number">65536</span>, <span class="hljs-number">65536</span>, cursor
         
-        <span class="keyword">if</span> Math.abs(num - k) &lt; <span class="number">20</span> <span class="keyword">then</span> <span class="keyword">break</span>
-        <span class="keyword">if</span> num &gt; k <span class="keyword">then</span> bottom = cursor
-        <span class="keyword">if</span> num &lt; k <span class="keyword">then</span> top = cursor
+        <span class="hljs-keyword">if</span> Math.abs(num - k) &lt; <span class="hljs-number">20</span> <span class="hljs-keyword">then</span> <span class="hljs-keyword">break</span>
+        <span class="hljs-keyword">if</span> num &gt; k <span class="hljs-keyword">then</span> bottom = cursor
+        <span class="hljs-keyword">if</span> num &lt; k <span class="hljs-keyword">then</span> top = cursor
         
-        <span class="keyword">if</span> cursor % <span class="number">4</span> <span class="keyword">is</span> <span class="number">1</span>
-            cursor = Math.floor((top + bottom) / <span class="number">2</span>)
-        <span class="keyword">else</span> <span class="keyword">if</span> cursor % <span class="number">4</span> <span class="keyword">is</span> <span class="number">3</span>
-            cursor = Math.ceil((top + bottom) / <span class="number">2</span>)
-        <span class="keyword">else</span>
-            cursor = (top + bottom) / <span class="number">2</span>
+        <span class="hljs-keyword">if</span> cursor % <span class="hljs-number">4</span> <span class="hljs-keyword">is</span> <span class="hljs-number">1</span>
+            cursor = Math.floor((top + bottom) / <span class="hljs-number">2</span>)
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> cursor % <span class="hljs-number">4</span> <span class="hljs-keyword">is</span> <span class="hljs-number">3</span>
+            cursor = Math.ceil((top + bottom) / <span class="hljs-number">2</span>)
+        <span class="hljs-keyword">else</span>
+            cursor = (top + bottom) / <span class="hljs-number">2</span>
     
-    ocursor = cursor + <span class="number">20</span> <span class="comment"># Get as accurate as possible.</span>
-    <span class="keyword">if</span> k &gt; num <span class="keyword">then</span> cursor -= <span class="number">80</span>
-    <span class="keyword">if</span> cursor &lt; <span class="number">0</span> <span class="keyword">then</span> cursor = <span class="number">0</span>
+    ocursor = cursor + <span class="hljs-number">20</span> <span class="hljs-comment"># Get as accurate as possible.</span>
+    <span class="hljs-keyword">if</span> k &gt; num <span class="hljs-keyword">then</span> cursor -= <span class="hljs-number">80</span>
+    <span class="hljs-keyword">if</span> cursor &lt; <span class="hljs-number">0</span> <span class="hljs-keyword">then</span> cursor = <span class="hljs-number">0</span>
     bcursor = cursor
     
-    okay = <span class="literal">false</span>
-    <span class="keyword">while</span> <span class="keyword">not</span> okay <span class="keyword">and</span> cursor &lt;= ocursor
-        cursor = cursor + <span class="number">2</span>
-        k = rhyper key, <span class="number">65536</span>, <span class="number">65536</span>, cursor
+    okay = <span class="hljs-literal">false</span>
+    <span class="hljs-keyword">while</span> <span class="hljs-keyword">not</span> okay <span class="hljs-keyword">and</span> cursor &lt;= ocursor
+        cursor = cursor + <span class="hljs-number">2</span>
+        k = rhyper key, <span class="hljs-number">65536</span>, <span class="hljs-number">65536</span>, cursor
         
-        <span class="keyword">if</span> k <span class="keyword">is</span> num <span class="keyword">then</span> okay = <span class="literal">true</span>
+        <span class="hljs-keyword">if</span> k <span class="hljs-keyword">is</span> num <span class="hljs-keyword">then</span> okay = <span class="hljs-literal">true</span>
     
-    <span class="keyword">if</span> <span class="keyword">not</span> okay
-        <span class="keyword">while</span> bcursor &lt;= ocursor
-            bcursor = bcursor + <span class="number">2</span>
-            k = rhyper key, <span class="number">65536</span>, <span class="number">65536</span>, bcursor
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> okay
+        <span class="hljs-keyword">while</span> bcursor &lt;= ocursor
+            bcursor = bcursor + <span class="hljs-number">2</span>
+            k = rhyper key, <span class="hljs-number">65536</span>, <span class="hljs-number">65536</span>, bcursor
             
-            <span class="keyword">if</span> k &gt; num
-                bcursor -= <span class="number">1</span>
-                <span class="keyword">break</span>
+            <span class="hljs-keyword">if</span> k &gt; num
+                bcursor -= <span class="hljs-number">1</span>
+                <span class="hljs-keyword">break</span>
         
         cursor = bcursor
     
@@ -161,102 +161,102 @@ same key.</p>
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
               <p>The following five functions have been ported from the R Project for
-Statistical Computing and appropriately modified.  Don&#39;t ask me how or why
+Statistical Computing and appropriately modified.  Don’t ask me how or why
 they work.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="function"><span class="title">afc</span></span> = (i) -&gt;
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">afc</span> = <span class="hljs-params">(i)</span> -&gt;</span>
     al =
-	    <span class="number">0</span>: <span class="string">'0'</span> <span class="comment"># ln(0!)=ln(1)</span>
-	    <span class="number">1</span>: <span class="string">'0'</span> <span class="comment"># ln(1!)=ln(1)</span>
-	    <span class="number">2</span>: <span class="string">'0.69314718055994530941723212145817'</span> <span class="comment"># ln(2)</span>
-	    <span class="number">3</span>: <span class="string">'1.79175946922805500081247735838070'</span> <span class="comment"># ln(6)</span>
-	    <span class="number">4</span>: <span class="string">'3.17805383034794561964694160129705'</span> <span class="comment"># ln(24)</span>
-	    <span class="number">5</span>: <span class="string">'4.78749174278204599424770093452324'</span>
-	    <span class="number">6</span>: <span class="string">'6.57925121201010099506017829290394'</span>
-	    <span class="number">7</span>: <span class="string">'8.52516136106541430016553103634712'</span>
-	    <span class="number">8</span>: <span class="string">'10.60460290274525022841722740072165'</span>
+	    <span class="hljs-number">0</span>: <span class="hljs-string">'0'</span> <span class="hljs-comment"># ln(0!)=ln(1)</span>
+	    <span class="hljs-number">1</span>: <span class="hljs-string">'0'</span> <span class="hljs-comment"># ln(1!)=ln(1)</span>
+	    <span class="hljs-number">2</span>: <span class="hljs-string">'0.69314718055994530941723212145817'</span> <span class="hljs-comment"># ln(2)</span>
+	    <span class="hljs-number">3</span>: <span class="hljs-string">'1.79175946922805500081247735838070'</span> <span class="hljs-comment"># ln(6)</span>
+	    <span class="hljs-number">4</span>: <span class="hljs-string">'3.17805383034794561964694160129705'</span> <span class="hljs-comment"># ln(24)</span>
+	    <span class="hljs-number">5</span>: <span class="hljs-string">'4.78749174278204599424770093452324'</span>
+	    <span class="hljs-number">6</span>: <span class="hljs-string">'6.57925121201010099506017829290394'</span>
+	    <span class="hljs-number">7</span>: <span class="hljs-string">'8.52516136106541430016553103634712'</span>
+	    <span class="hljs-number">8</span>: <span class="hljs-string">'10.60460290274525022841722740072165'</span>
     
-    <span class="keyword">if</span> i &lt; <span class="number">0</span> <span class="keyword">then</span> <span class="keyword">throw</span> <span class="string">'i less than 0.  Should not happen.'</span>
-    <span class="keyword">if</span> i &lt;= <span class="number">8</span> <span class="keyword">then</span> <span class="keyword">return</span> al[i]
+    <span class="hljs-keyword">if</span> i &lt; <span class="hljs-number">0</span> <span class="hljs-keyword">then</span> <span class="hljs-keyword">throw</span> <span class="hljs-string">'i less than 0.  Should not happen.'</span>
+    <span class="hljs-keyword">if</span> i &lt;= <span class="hljs-number">8</span> <span class="hljs-keyword">then</span> <span class="hljs-keyword">return</span> al[i]
     
-    pi = <span class="number">0.5</span> * Math.log(<span class="number">2</span> * Math.PI)
-    (i+<span class="number">0.5</span>) * Math.log(i) - i + (<span class="number">1</span><span class="regexp">/12) / i - (1/360) / i / i /</span> i + pi
+    pi = <span class="hljs-number">0.5</span> * Math.log(<span class="hljs-number">2</span> * Math.PI)
+    (i+<span class="hljs-number">0.5</span>) * Math.log(i) - i + (<span class="hljs-number">1</span>/<span class="hljs-number">12</span>) / i - (<span class="hljs-number">1</span>/<span class="hljs-number">360</span>) / i / i / i + pi
 
-<span class="function"><span class="title">imax2</span></span> = (x, y) -&gt; <span class="keyword">if</span> x &lt; y <span class="keyword">then</span> y <span class="keyword">else</span> x
-<span class="function"><span class="title">imin2</span></span> = (x, y) -&gt; <span class="keyword">if</span> x &lt; y <span class="keyword">then</span> x <span class="keyword">else</span> y
+<span class="hljs-function"><span class="hljs-title">imax2</span> = <span class="hljs-params">(x, y)</span> -&gt;</span> <span class="hljs-keyword">if</span> x &lt; y <span class="hljs-keyword">then</span> y <span class="hljs-keyword">else</span> x
+<span class="hljs-function"><span class="hljs-title">imin2</span> = <span class="hljs-params">(x, y)</span> -&gt;</span> <span class="hljs-keyword">if</span> x &lt; y <span class="hljs-keyword">then</span> x <span class="hljs-keyword">else</span> y
 
-<span class="class"><span class="keyword">class</span> <span class="title">PRNG</span></span>
-    constructor: (<span class="property">@coin</span>) -&gt;
-        <span class="property">@cipher</span> = crypto.createCipher <span class="string">'aes-256-ctr'</span>, <span class="property">@coin</span>
-        <span class="property">@blank</span> = <span class="keyword">new</span> Buffer <span class="number">16</span>
-        <span class="property">@blank</span>.fill <span class="number">0</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PRNG</span></span>
+    <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(<span class="hljs-property">@coin</span>)</span> -&gt;</span>
+        <span class="hljs-property">@cipher</span> = crypto.createCipher <span class="hljs-string">'aes-256-ctr'</span>, <span class="hljs-property">@coin</span>
+        <span class="hljs-property">@blank</span> = <span class="hljs-keyword">new</span> Buffer <span class="hljs-number">16</span>
+        <span class="hljs-property">@blank</span>.fill <span class="hljs-number">0</span>
     
-    draw: -&gt;
-        <span class="property">@cipher</span>.write <span class="property">@blank</span>
-        out = <span class="property">@cipher</span>.read()
+    <span class="hljs-attribute">draw</span>:<span class="hljs-function"> -&gt;</span>
+        <span class="hljs-property">@cipher</span>.write <span class="hljs-property">@blank</span>
+        out = <span class="hljs-property">@cipher</span>.read()
         
-        numer = <span class="keyword">new</span> BigInteger out.toString(<span class="string">'hex'</span>), <span class="number">16</span>
-        numer = <span class="keyword">new</span> BigDecimal numer.toString()
-        denom = <span class="keyword">new</span> BigDecimal <span class="string">'340282366920938463463374607431768211456'</span>
+        numer = <span class="hljs-keyword">new</span> BigInteger out.toString(<span class="hljs-string">'hex'</span>), <span class="hljs-number">16</span>
+        numer = <span class="hljs-keyword">new</span> BigDecimal numer.toString()
+        denom = <span class="hljs-keyword">new</span> BigDecimal <span class="hljs-string">'340282366920938463463374607431768211456'</span>
         
-        parseFloat numer.divide(denom, <span class="number">100</span>, BigDecimal.ROUND_HALF_UP).toString()
+        parseFloat numer.divide(denom, <span class="hljs-number">100</span>, BigDecimal.ROUND_HALF_UP).toString()
 
-<span class="function"><span class="title">rhyper</span></span> = (coin, nn1, nn2, kk) -&gt;
-    prng = <span class="keyword">new</span> PRNG coin
+<span class="hljs-function"><span class="hljs-title">rhyper</span> = <span class="hljs-params">(coin, nn1, nn2, kk)</span> -&gt;</span>
+    prng = <span class="hljs-keyword">new</span> PRNG coin
     
-    con = <span class="number">57.56462733</span>
-    deltal = <span class="number">0.0078</span>
-    deltau = <span class="number">0.0034</span>
-    ks = -<span class="number">1</span>
-    n1s = -<span class="number">1</span>
-    n2s = -<span class="number">1</span>
-    scale = <span class="number">1e25</span>
+    con = <span class="hljs-number">57.56462733</span>
+    deltal = <span class="hljs-number">0.0078</span>
+    deltau = <span class="hljs-number">0.0034</span>
+    ks = -<span class="hljs-number">1</span>
+    n1s = -<span class="hljs-number">1</span>
+    n2s = -<span class="hljs-number">1</span>
+    scale = <span class="hljs-number">1e25</span>
     
-    <span class="keyword">if</span> nn1 <span class="keyword">is</span> Infinity <span class="keyword">or</span> nn2 <span class="keyword">is</span> Infinity <span class="keyword">or</span> kk <span class="keyword">is</span> Infinity <span class="keyword">then</span> <span class="keyword">throw</span> <span class="string">'NaN'</span>
+    <span class="hljs-keyword">if</span> nn1 <span class="hljs-keyword">is</span> Infinity <span class="hljs-keyword">or</span> nn2 <span class="hljs-keyword">is</span> Infinity <span class="hljs-keyword">or</span> kk <span class="hljs-keyword">is</span> Infinity <span class="hljs-keyword">then</span> <span class="hljs-keyword">throw</span> <span class="hljs-string">'NaN'</span>
     
-    nn1 = Math.floor(nn1 + <span class="number">0.5</span>)
-    nn2 = Math.floor(nn2 + <span class="number">0.5</span>)
-    kk = Math.floor(kk + <span class="number">0.5</span>)
+    nn1 = Math.floor(nn1 + <span class="hljs-number">0.5</span>)
+    nn2 = Math.floor(nn2 + <span class="hljs-number">0.5</span>)
+    kk = Math.floor(kk + <span class="hljs-number">0.5</span>)
     
-    <span class="keyword">if</span> nn1 &lt; <span class="number">0</span> <span class="keyword">or</span> nn2 &lt; <span class="number">0</span> <span class="keyword">or</span> kk &lt; <span class="number">0</span> <span class="keyword">or</span> kk &gt; (nn1 + nn2) <span class="keyword">then</span> <span class="keyword">throw</span> <span class="string">'NaN'</span>
+    <span class="hljs-keyword">if</span> nn1 &lt; <span class="hljs-number">0</span> <span class="hljs-keyword">or</span> nn2 &lt; <span class="hljs-number">0</span> <span class="hljs-keyword">or</span> kk &lt; <span class="hljs-number">0</span> <span class="hljs-keyword">or</span> kk &gt; (nn1 + nn2) <span class="hljs-keyword">then</span> <span class="hljs-keyword">throw</span> <span class="hljs-string">'NaN'</span>
     
-    <span class="keyword">if</span> nn1 <span class="keyword">isnt</span> n1s <span class="keyword">or</span> nn2 <span class="keyword">isnt</span> n2s
-        setup1 = <span class="literal">true</span>
-        setup2 = <span class="literal">true</span>
-    <span class="keyword">else</span> <span class="keyword">if</span> kk <span class="keyword">isnt</span> ks
-        setup1 = <span class="literal">false</span>
-        setup2 = <span class="literal">true</span>
-    <span class="keyword">else</span>
-        setup1 = <span class="literal">false</span>
-        setup2 = <span class="literal">false</span>
+    <span class="hljs-keyword">if</span> nn1 <span class="hljs-keyword">isnt</span> n1s <span class="hljs-keyword">or</span> nn2 <span class="hljs-keyword">isnt</span> n2s
+        setup1 = <span class="hljs-literal">true</span>
+        setup2 = <span class="hljs-literal">true</span>
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> kk <span class="hljs-keyword">isnt</span> ks
+        setup1 = <span class="hljs-literal">false</span>
+        setup2 = <span class="hljs-literal">true</span>
+    <span class="hljs-keyword">else</span>
+        setup1 = <span class="hljs-literal">false</span>
+        setup2 = <span class="hljs-literal">false</span>
     
-    <span class="keyword">if</span> setup1
+    <span class="hljs-keyword">if</span> setup1
         n1s = nn1
         n2s = nn2
         tn = nn1 + nn2
         
-        <span class="keyword">if</span> nn1 &lt;= nn2
+        <span class="hljs-keyword">if</span> nn1 &lt;= nn2
             n1 = nn1
             n2 = nn2
-        <span class="keyword">else</span>
+        <span class="hljs-keyword">else</span>
             n1 = nn2
             n2 = nn1
     
-    <span class="keyword">if</span> setup2
+    <span class="hljs-keyword">if</span> setup2
         ks = kk
         tk = kk + kk
         
-        <span class="keyword">if</span> (kk + kk) &gt;= tn
+        <span class="hljs-keyword">if</span> (kk + kk) &gt;= tn
             k = tn - kk
-        <span class="keyword">else</span>
+        <span class="hljs-keyword">else</span>
             k = kk
     
-    <span class="keyword">if</span> setup1 <span class="keyword">or</span> setup2
-        m = (k + <span class="number">1</span>) * (n1 + <span class="number">1</span>) / (tn + <span class="number">2</span>)
+    <span class="hljs-keyword">if</span> setup1 <span class="hljs-keyword">or</span> setup2
+        m = (k + <span class="hljs-number">1</span>) * (n1 + <span class="hljs-number">1</span>) / (tn + <span class="hljs-number">2</span>)
         
-        minjx = imax2 <span class="number">0</span>, (k - n2)
+        minjx = imax2 <span class="hljs-number">0</span>, (k - n2)
         maxjx = imin2 n1, k</pre></div></div>
             
         </li>
@@ -268,69 +268,69 @@ they work.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>Generate random variate -- three basic cases.</p>
+              <p>Generate random variate — three basic cases.</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>    
-    <span class="keyword">if</span> minjx <span class="keyword">is</span> maxjx <span class="comment"># I : Degenerate distribution.</span>
+    <span class="hljs-keyword">if</span> minjx <span class="hljs-keyword">is</span> maxjx <span class="hljs-comment"># I : Degenerate distribution.</span>
         ix = maxjx
-    <span class="keyword">else</span> <span class="keyword">if</span> (m - minjx) &lt; <span class="number">10</span> <span class="comment"># II : Inverse transformation.</span>
-        <span class="keyword">if</span> setup1 <span class="keyword">or</span> setup2
-            <span class="keyword">if</span> k &lt; n2
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (m - minjx) &lt; <span class="hljs-number">10</span> <span class="hljs-comment"># II : Inverse transformation.</span>
+        <span class="hljs-keyword">if</span> setup1 <span class="hljs-keyword">or</span> setup2
+            <span class="hljs-keyword">if</span> k &lt; n2
                 w = Math.exp(con + afc(n2) + afc(n1 + n2 - k) - afc(n2 - k) - 
                     afc(n1 + n2))
-            <span class="keyword">else</span>
+            <span class="hljs-keyword">else</span>
                 w = Math.exp(con + afc(n1) + afc(k) - afc(k-n2) - afc(n1+n2))
         
-        <span class="function"><span class="title">l10</span></span> = (w, minjx) -&gt; <span class="comment"># L10</span>
+        <span class="hljs-function"><span class="hljs-title">l10</span> = <span class="hljs-params">(w, minjx)</span> -&gt;</span> <span class="hljs-comment"># L10</span>
             p = w
             ix = minjx
-            u = prng.draw() * <span class="number">1e25</span>
+            u = prng.draw() * <span class="hljs-number">1e25</span>
             
             [p, ix, u]
         
         [p, ix, u] = l10 w, minjx
         
-        <span class="keyword">while</span> u &gt; p <span class="comment"># L20</span>
+        <span class="hljs-keyword">while</span> u &gt; p <span class="hljs-comment"># L20</span>
             u -= p
             p *= (n1 - ix) * (k - ix)
             ++ix
             
             p = p / ix / (n2 - k + ix)
-            <span class="keyword">if</span> ix &gt; maxjx <span class="keyword">then</span> [p, ix, u] = l10 w, minjx
+            <span class="hljs-keyword">if</span> ix &gt; maxjx <span class="hljs-keyword">then</span> [p, ix, u] = l10 w, minjx
         
-    <span class="keyword">else</span> <span class="comment"># III : h2pe</span>
-        <span class="keyword">if</span> setup1 <span class="keyword">or</span> setup2
-            s = Math.sqrt((tn - k) * k * n1 * n2 / (tn - <span class="number">1</span>) / tn / tn)
-            d = Math.floor((<span class="number">1.5</span> * s) + <span class="number">0.5</span>)
-            xl = m - d + <span class="number">0.5</span>
-            xr = m + d + <span class="number">0.5</span>
+    <span class="hljs-keyword">else</span> <span class="hljs-comment"># III : h2pe</span>
+        <span class="hljs-keyword">if</span> setup1 <span class="hljs-keyword">or</span> setup2
+            s = Math.sqrt((tn - k) * k * n1 * n2 / (tn - <span class="hljs-number">1</span>) / tn / tn)
+            d = Math.floor((<span class="hljs-number">1.5</span> * s) + <span class="hljs-number">0.5</span>)
+            xl = m - d + <span class="hljs-number">0.5</span>
+            xr = m + d + <span class="hljs-number">0.5</span>
             a = afc(m) + afc(n1 - m) + afc(k - m) + afc(n2 - k + m)
             kl = Math.exp(a - afc(Math.floor(xl)) - afc(Math.floor(n1 - xl)) -
                 afc(Math.floor(k - xl)) - afc(Math.floor(n2 - k + xl)))
-            kr = Math.exp(a - afc(Math.floor(xr - <span class="number">1</span>)) -
-                afc(Math.floor(n1 - xr + <span class="number">1</span>)) - afc(Math.floor(k - xr + <span class="number">1</span>)) -
-                afc(Math.floor(n2 - k + xr - <span class="number">1</span>)))
-            lamdl = -Math.log(xl * (n2 - k + xl) / (n1 - xl + <span class="number">1</span>) / (k - xl + <span class="number">1</span>))
-            lamdr = -Math.log((n1 - xr + <span class="number">1</span>) * (k - xr + <span class="number">1</span>) / xr / (n2 - k + xr))
+            kr = Math.exp(a - afc(Math.floor(xr - <span class="hljs-number">1</span>)) -
+                afc(Math.floor(n1 - xr + <span class="hljs-number">1</span>)) - afc(Math.floor(k - xr + <span class="hljs-number">1</span>)) -
+                afc(Math.floor(n2 - k + xr - <span class="hljs-number">1</span>)))
+            lamdl = -Math.log(xl * (n2 - k + xl) / (n1 - xl + <span class="hljs-number">1</span>) / (k - xl + <span class="hljs-number">1</span>))
+            lamdr = -Math.log((n1 - xr + <span class="hljs-number">1</span>) * (k - xr + <span class="hljs-number">1</span>) / xr / (n2 - k + xr))
             p1 = d + d
             p2 = p1 + kl / lamdl
             p3 = p2 + kr / lamdr
         
-        <span class="keyword">while</span> <span class="literal">true</span> <span class="comment"># L30</span>
+        <span class="hljs-keyword">while</span> <span class="hljs-literal">true</span> <span class="hljs-comment"># L30</span>
             u = prng.draw() * p3
             v = prng.draw()
             
-            <span class="keyword">if</span> u &lt; p1
+            <span class="hljs-keyword">if</span> u &lt; p1
                 ix = Math.floor(xl + u)
-            <span class="keyword">else</span> <span class="keyword">if</span> (u &lt;= p2)
+            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (u &lt;= p2)
                 ix = Math.floor(xl + Math.log(v) / lamdl)
-                <span class="keyword">if</span> ix &lt; minjx <span class="keyword">then</span> <span class="keyword">continue</span>
+                <span class="hljs-keyword">if</span> ix &lt; minjx <span class="hljs-keyword">then</span> <span class="hljs-keyword">continue</span>
                 v = v * (u - p1) * lamdl
-            <span class="keyword">else</span>
+            <span class="hljs-keyword">else</span>
                 ix = Math.floor(xr - Math.log(v) / lamdr)
-                <span class="keyword">if</span> ix &gt; maxjx <span class="keyword">then</span> <span class="keyword">continue</span>
+                <span class="hljs-keyword">if</span> ix &gt; maxjx <span class="hljs-keyword">then</span> <span class="hljs-keyword">continue</span>
                 v = v * (u - p2) * lamdr</pre></div></div>
             
         </li>
@@ -346,25 +346,25 @@ they work.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            <span class="keyword">if</span> m &lt; <span class="number">100</span> <span class="keyword">or</span> ix &lt;= <span class="number">50</span>
-                f = <span class="number">1</span>
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> m &lt; <span class="hljs-number">100</span> <span class="hljs-keyword">or</span> ix &lt;= <span class="hljs-number">50</span>
+                f = <span class="hljs-number">1</span>
                 
-                <span class="keyword">if</span> m &lt; ix
-                    i = m + <span class="number">1</span>
+                <span class="hljs-keyword">if</span> m &lt; ix
+                    i = m + <span class="hljs-number">1</span>
                     
-                    <span class="keyword">while</span> i &lt;= ix
-                        f = f * (n1 - i + <span class="number">1</span>) * (k - i + <span class="number">1</span>) / (n2 - k + i) / i
+                    <span class="hljs-keyword">while</span> i &lt;= ix
+                        f = f * (n1 - i + <span class="hljs-number">1</span>) * (k - i + <span class="hljs-number">1</span>) / (n2 - k + i) / i
                         ++i
                 
-                <span class="keyword">else</span> <span class="keyword">if</span> m &gt; ix
-                    i = ix + <span class="number">1</span>
+                <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> m &gt; ix
+                    i = ix + <span class="hljs-number">1</span>
                     
-                    <span class="keyword">while</span> i &lt;= m
-                        f = f * i * (n2 - k + i) / (n1 - i + <span class="number">1</span>) / (k - i + <span class="number">1</span>)
+                    <span class="hljs-keyword">while</span> i &lt;= m
+                        f = f * i * (n2 - k + i) / (n1 - i + <span class="hljs-number">1</span>) / (k - i + <span class="hljs-number">1</span>)
                         ++i
                 
-                <span class="keyword">if</span> v &lt;= f <span class="keyword">then</span> <span class="keyword">break</span>
-            <span class="keyword">else</span></pre></div></div>
+                <span class="hljs-keyword">if</span> v &lt;= f <span class="hljs-keyword">then</span> <span class="hljs-keyword">break</span>
+            <span class="hljs-keyword">else</span></pre></div></div>
             
         </li>
         
@@ -380,30 +380,30 @@ they work.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>                y = ix
-                y1 = y + <span class="number">1</span>
+                y1 = y + <span class="hljs-number">1</span>
                 ym = y - m
-                yn = n1 - y + <span class="number">1</span>
-                yk = k - y + <span class="number">1</span>
+                yn = n1 - y + <span class="hljs-number">1</span>
+                yk = k - y + <span class="hljs-number">1</span>
                 nk = n2 - k + y1
                 r = -ym / y1
                 s = ym / yn
                 t = ym / yk
                 e = -ym / nk
-                g = yn * yk / (y1 * nk) - <span class="number">1</span>
-                dg = <span class="number">1</span>
-                <span class="keyword">if</span> g &lt; <span class="number">0</span> <span class="keyword">then</span> dg = <span class="number">1</span> + g
+                g = yn * yk / (y1 * nk) - <span class="hljs-number">1</span>
+                dg = <span class="hljs-number">1</span>
+                <span class="hljs-keyword">if</span> g &lt; <span class="hljs-number">0</span> <span class="hljs-keyword">then</span> dg = <span class="hljs-number">1</span> + g
                 
-                gu = g * (<span class="number">1</span> + g * (-<span class="number">0.5</span> + g / <span class="number">3</span>))
-                gl = gu - <span class="number">.25</span> * (g * g * g * g) / dg
-                xm = m + <span class="number">0.5</span>
-                xn = n1 - m + <span class="number">0.5</span>
-                xk = k - m + <span class="number">0.5</span>
+                gu = g * (<span class="hljs-number">1</span> + g * (-<span class="hljs-number">0.5</span> + g / <span class="hljs-number">3</span>))
+                gl = gu - <span class="hljs-number">.25</span> * (g * g * g * g) / dg
+                xm = m + <span class="hljs-number">0.5</span>
+                xn = n1 - m + <span class="hljs-number">0.5</span>
+                xk = k - m + <span class="hljs-number">0.5</span>
                 nm = n2 - k + xm
                 ub = y * gu - m * gl + deltau + 
-                    xm * r * (<span class="number">1</span> + r * (-<span class="number">0.5</span> + r / <span class="number">3</span>)) + 
-                    xn * s * (<span class="number">1</span> + s * (-<span class="number">0.5</span> + s / <span class="number">3</span>)) +
-                    xk * t * (<span class="number">1</span> + t * (-<span class="number">0.5</span> + t / <span class="number">3</span>)) +
-                    nm * e * (<span class="number">1</span> + e * (-<span class="number">0.5</span> + e / <span class="number">3</span>))</pre></div></div>
+                    xm * r * (<span class="hljs-number">1</span> + r * (-<span class="hljs-number">0.5</span> + r / <span class="hljs-number">3</span>)) + 
+                    xn * s * (<span class="hljs-number">1</span> + s * (-<span class="hljs-number">0.5</span> + s / <span class="hljs-number">3</span>)) +
+                    xk * t * (<span class="hljs-number">1</span> + t * (-<span class="hljs-number">0.5</span> + t / <span class="hljs-number">3</span>)) +
+                    nm * e * (<span class="hljs-number">1</span> + e * (-<span class="hljs-number">0.5</span> + e / <span class="hljs-number">3</span>))</pre></div></div>
             
         </li>
         
@@ -419,7 +419,7 @@ they work.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>                alv = Math.log v
-                <span class="keyword">if</span> alv &gt; ub <span class="keyword">then</span> <span class="keyword">continue</span></pre></div></div>
+                <span class="hljs-keyword">if</span> alv &gt; ub <span class="hljs-keyword">then</span> <span class="hljs-keyword">continue</span></pre></div></div>
             
         </li>
         
@@ -435,20 +435,20 @@ they work.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>                dr = xm * (r * r * r * r)
-                <span class="keyword">if</span> r &lt; <span class="number">0</span> <span class="keyword">then</span> dr /= (<span class="number">1</span> + r)
+                <span class="hljs-keyword">if</span> r &lt; <span class="hljs-number">0</span> <span class="hljs-keyword">then</span> dr /= (<span class="hljs-number">1</span> + r)
                 
                 ds = xn * (s * s * s * s)
-                <span class="keyword">if</span> s &lt; <span class="number">0</span> <span class="keyword">then</span> ds /= (<span class="number">1</span> + s)
+                <span class="hljs-keyword">if</span> s &lt; <span class="hljs-number">0</span> <span class="hljs-keyword">then</span> ds /= (<span class="hljs-number">1</span> + s)
                 
                 dt = xk * (t * t * t * t)
-                <span class="keyword">if</span> t &lt; <span class="number">0</span> <span class="keyword">then</span> dt /= (<span class="number">1</span> + t)
+                <span class="hljs-keyword">if</span> t &lt; <span class="hljs-number">0</span> <span class="hljs-keyword">then</span> dt /= (<span class="hljs-number">1</span> + t)
                 
                 de = nm * (e * e * e * e)
-                <span class="keyword">if</span> e &lt; <span class="number">0</span> <span class="keyword">then</span> de /= (<span class="number">1</span> + e)
+                <span class="hljs-keyword">if</span> e &lt; <span class="hljs-number">0</span> <span class="hljs-keyword">then</span> de /= (<span class="hljs-number">1</span> + e)
                 
-                cand = ub - <span class="number">0.25</span> * (dr+ds+dt+de) + (y + m) * (gl - gu) - deltal
-                <span class="keyword">if</span> alv &lt; cand <span class="keyword">then</span> <span class="keyword">break</span>
-                <span class="keyword">else</span></pre></div></div>
+                cand = ub - <span class="hljs-number">0.25</span> * (dr+ds+dt+de) + (y + m) * (gl - gu) - deltal
+                <span class="hljs-keyword">if</span> alv &lt; cand <span class="hljs-keyword">then</span> <span class="hljs-keyword">break</span>
+                <span class="hljs-keyword">else</span></pre></div></div>
             
         </li>
         
@@ -459,12 +459,12 @@ they work.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <p>Stirling&#39;s formula to machine accuracy</p>
+              <p>Stirling’s formula to machine accuracy</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>                    cand = (a - afc(ix) - afc(n1-ix) - afc(k-ix) - afc(n2-k+ix))
-                    <span class="keyword">if</span> alv &lt;= cand <span class="keyword">then</span> <span class="keyword">break</span> <span class="keyword">else</span> <span class="keyword">continue</span></pre></div></div>
+                    <span class="hljs-keyword">if</span> alv &lt;= cand <span class="hljs-keyword">then</span> <span class="hljs-keyword">break</span> <span class="hljs-keyword">else</span> <span class="hljs-keyword">continue</span></pre></div></div>
             
         </li>
         
@@ -479,12 +479,12 @@ they work.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span> (kk + kk) &gt;= tn
-        <span class="keyword">if</span> nn1 &gt; nn2
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (kk + kk) &gt;= tn
+        <span class="hljs-keyword">if</span> nn1 &gt; nn2
             ix = kk - nn2 + ix
-        <span class="keyword">else</span> ix = nn1 - ix
-    <span class="keyword">else</span>
-        <span class="keyword">if</span> nn1 &gt; nn2
+        <span class="hljs-keyword">else</span> ix = nn1 - ix
+    <span class="hljs-keyword">else</span>
+        <span class="hljs-keyword">if</span> nn1 &gt; nn2
             ix = kk - ix
     
     ix</pre></div></div>

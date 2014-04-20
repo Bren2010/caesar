@@ -7,7 +7,7 @@ crypto = require 'crypto'
 # 3. `alg` is the algorithm to use. *(String)*
 exports.chain = (value, n = 1, alg = 'sha512') ->
     sum = (val) ->
-        hash = crypto.createHash 'sha512'
+        hash = crypto.createHash alg
         hash.end val
         hash.read()
     

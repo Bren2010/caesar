@@ -81,7 +81,7 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre>crypto = require <span class="string">'crypto'</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>crypto = <span class="hljs-built_in">require</span> <span class="hljs-string">'crypto'</span></pre></div></div>
             
         </li>
         
@@ -101,13 +101,13 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>exports.<span class="function"><span class="title">chain</span></span> = (value, n = <span class="number">1</span>, alg = <span class="string">'sha512'</span>) -&gt;
-    <span class="function"><span class="title">sum</span></span> = (val) -&gt;
-        hash = crypto.createHash <span class="string">'sha512'</span>
+            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">exports</span>.<span class="hljs-function"><span class="hljs-title">chain</span> = <span class="hljs-params">(value, n = <span class="hljs-number">1</span>, alg = <span class="hljs-string">'sha512'</span>)</span> -&gt;</span>
+    <span class="hljs-function"><span class="hljs-title">sum</span> = <span class="hljs-params">(val)</span> -&gt;</span>
+        hash = crypto.createHash alg
         hash.end val
         hash.read()
     
-    [n, value] = [n - <span class="number">1</span>, sum value] <span class="keyword">until</span> n <span class="keyword">is</span> <span class="number">0</span>
+    [n, value] = [n - <span class="hljs-number">1</span>, sum value] <span class="hljs-keyword">until</span> n <span class="hljs-keyword">is</span> <span class="hljs-number">0</span>
     
     value</pre></div></div>
             

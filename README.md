@@ -16,6 +16,7 @@ npm install caesar
 3. Disk Encryption (XTS)
 4. Searchable Symmetric Encryption (Single-User and Multi-User, Ranked)
 5. Commitments
+6. One-Time Signatures (HORS)
 
 ## Where I Ramble for a Bit
 

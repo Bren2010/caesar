@@ -14,6 +14,8 @@
 
   exports.opse = require('./opse');
 
+  exports.ots = require('./ots');
+
   exports.StreamEncrypter = exports.message.Encrypter;
 
   exports.StreamDecrypter = exports.message.Decrypter;

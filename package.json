@@ -21,7 +21,7 @@
     "type": "git",
     "url": "https://github.com/Bren2010/caesar"
   },
-  "version": "1.0.5",
+  "version": "1.0.6",
   "main": "caesar.js",
   "dependencies": {
     "ursa": "*",

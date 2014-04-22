@@ -2,6 +2,9 @@
 
 An easy-to-use advanced cryptography library that lets you focus on writing applications that process data, not encrypted data.
 
+- **Examples:**  https://github.com/Bren2010/caesar/tree/master/examples
+- **Documentation:**  http://bren2010.github.io/caesar/
+
 ### Install
 ```bash
 npm install caesar
@@ -13,6 +16,7 @@ npm install caesar
 3. Disk Encryption (XTS)
 4. Searchable Symmetric Encryption (Single-User and Multi-User, Ranked)
 5. Commitments
+6. One-Time Signatures (HORS)
 
 ## Where I Ramble for a Bit
 
@@ -22,4 +26,4 @@ My goal in writing this library is to provide simple and easy-to-use interfaces 
 
 Some things that might be added in the future include:  user authentication, more complex key exchanges, zero-knowledge proofs, and homomorphic encryption schemes, poker.
 
-I've tried to keep all of the code very well documented and write examples that concisely demonstrate proper use of the library.  If you encounter any problems or confusion while using the library, please [open an issue](https://github.com/Bren2010/caesar/issues) or [send me an email](https://github.com/Bren2010).
+I've tried to keep all of the code very well documented and write examples that concisely demonstrate proper use of the library.  If you encounter any problems or confusion while using the library, please [open an issue](https://github.com/Bren2010/caesar/issues) ~~or [send me an email](https://github.com/Bren2010)~~.

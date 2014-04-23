@@ -16,6 +16,8 @@
 
   exports.ots = require('./ots');
 
+  exports.tree = require('./tree');
+
   exports.StreamEncrypter = exports.message.Encrypter;
 
   exports.StreamDecrypter = exports.message.Decrypter;

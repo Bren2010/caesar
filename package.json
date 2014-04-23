@@ -14,14 +14,16 @@
     "xts",
     "opse",
     "sse",
-    "rsse"
+    "rsse",
+    "hors",
+    "merkle"
   ],
   "bugs": "https://github.com/Bren2010/caesar/issues",
   "repository": {
     "type": "git",
     "url": "https://github.com/Bren2010/caesar"
   },
-  "version": "1.0.6",
+  "version": "1.0.7",
   "main": "caesar.js",
   "dependencies": {
     "ursa": "*",

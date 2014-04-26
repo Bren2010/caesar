@@ -18,6 +18,8 @@
 
   exports.tree = require('./tree');
 
+  exports.kts = require('./kts');
+
   exports.StreamEncrypter = exports.message.Encrypter;
 
   exports.StreamDecrypter = exports.message.Decrypter;

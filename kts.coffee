@@ -27,12 +27,12 @@ class exports.Signer
             
             i = 0 # Create signature branches.
             until i is 20
-                head += hash.chain vi + 's' + (i + 1), 255, 'sha1'
+                head += hash.chain vi + 's' + (i + 1), 256, 'sha1'
                 ++i
             
             i = 0 # Create checksum branches.
             until i is 2
-                head += hash.chain vi + 'c' + (i + 1), 255, 'sha1'
+                head += hash.chain vi + 'c' + (i + 1), 256, 'sha1'
                 ++i
             
             head = hash.chain head, 1, 'sha1'
@@ -61,7 +61,7 @@ class exports.Signer
         
         i = 0 # Create signature branches.
         until i is h.length
-            n = parseInt(h[i] + h[i + 1], 16)
+            n = parseInt(h[i] + h[i + 1], 16) + 1
             serial = (i / 2) + 1
             vi = hash.chain @heads[@heads.length - 3] + 's' + serial, n, 'sha1'
             sig.push vi
@@ -71,9 +71,9 @@ class exports.Signer
             i = i + 2
         
         i = 0 # Create checksum branches.
-        checksum = ('00' + ((255 * 20) - checksum).toString(16)).substr(-3)
+        checksum = ('00' + ((256 * 20) - checksum).toString(16)).substr(-3)
         until i is 2
-            n = parseInt(checksum[i], 16)
+            n = parseInt(checksum[i], 16) + 1
             vi = hash.chain @heads[@heads.length - 3] + 'c' + (i + 1), n, 'sha1'
             sig.push vi
             
@@ -100,17 +100,17 @@ class exports.Verifier
         
         i = 0 # Verify signature branches.
         until i is h.length
-            n = parseInt(h[i] + h[i + 1], 16)
-            candPubKey += hash.chain sig[i / 2], 255 - n, 'sha1'
+            n = parseInt(h[i] + h[i + 1], 16) + 1
+            candPubKey += hash.chain sig[i / 2], 256 - n, 'sha1'
             checksum += n
             
             i = i + 2
         
         i = 0 # Verify checksum branches.
-        checksum = ('00' + ((255 * 20) - checksum).toString(16)).substr(-3)
+        checksum = ('00' + ((256 * 20) - checksum).toString(16)).substr(-3)
         until i is 2
-            n = parseInt(checksum[i], 16)
-            candPubKey += hash.chain sig[i + 20], 255 - n, 'sha1'
+            n = parseInt(checksum[i], 16) + 1
+            candPubKey += hash.chain sig[i + 20], 256 - n, 'sha1'
             
             ++i
         
@@ -119,12 +119,12 @@ class exports.Verifier
         
         i = 0 # Create verification signature branches.
         until i is 20
-            candFinal += hash.chain candPubKey + 's' + (i + 1), 255, 'sha1'
+            candFinal += hash.chain candPubKey + 's' + (i + 1), 256, 'sha1'
             ++i
         
         i = 0 # Create verification checksum branches.
         until i is 2
-            candFinal += hash.chain candPubKey + 'c' + (i + 1), 255, 'sha1'
+            candFinal += hash.chain candPubKey + 'c' + (i + 1), 256, 'sha1'
             ++i
         
         candFinal = hash.chain candFinal, 1, 'sha1'

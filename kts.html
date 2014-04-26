@@ -136,12 +136,12 @@ will be generated.  <em>(String)</em></li>
             
             i = <span class="hljs-number">0</span> <span class="hljs-comment"># Create signature branches.</span>
             <span class="hljs-keyword">until</span> i <span class="hljs-keyword">is</span> <span class="hljs-number">20</span>
-                head += hash.chain vi + <span class="hljs-string">'s'</span> + (i + <span class="hljs-number">1</span>), <span class="hljs-number">255</span>, <span class="hljs-string">'sha1'</span>
+                head += hash.chain vi + <span class="hljs-string">'s'</span> + (i + <span class="hljs-number">1</span>), <span class="hljs-number">256</span>, <span class="hljs-string">'sha1'</span>
                 ++i
             
             i = <span class="hljs-number">0</span> <span class="hljs-comment"># Create checksum branches.</span>
             <span class="hljs-keyword">until</span> i <span class="hljs-keyword">is</span> <span class="hljs-number">2</span>
-                head += hash.chain vi + <span class="hljs-string">'c'</span> + (i + <span class="hljs-number">1</span>), <span class="hljs-number">255</span>, <span class="hljs-string">'sha1'</span>
+                head += hash.chain vi + <span class="hljs-string">'c'</span> + (i + <span class="hljs-number">1</span>), <span class="hljs-number">256</span>, <span class="hljs-string">'sha1'</span>
                 ++i
             
             head = hash.chain head, <span class="hljs-number">1</span>, <span class="hljs-string">'sha1'</span>
@@ -207,7 +207,7 @@ use of the signature scheme.</p>
         
         i = <span class="hljs-number">0</span> <span class="hljs-comment"># Create signature branches.</span>
         <span class="hljs-keyword">until</span> i <span class="hljs-keyword">is</span> h.length
-            n = parseInt(h[i] + h[i + <span class="hljs-number">1</span>], <span class="hljs-number">16</span>)
+            n = parseInt(h[i] + h[i + <span class="hljs-number">1</span>], <span class="hljs-number">16</span>) + <span class="hljs-number">1</span>
             serial = (i / <span class="hljs-number">2</span>) + <span class="hljs-number">1</span>
             vi = hash.chain <span class="hljs-property">@heads</span>[<span class="hljs-property">@heads</span>.length - <span class="hljs-number">3</span>] + <span class="hljs-string">'s'</span> + serial, n, <span class="hljs-string">'sha1'</span>
             sig.push vi
@@ -217,9 +217,9 @@ use of the signature scheme.</p>
             i = i + <span class="hljs-number">2</span>
         
         i = <span class="hljs-number">0</span> <span class="hljs-comment"># Create checksum branches.</span>
-        checksum = (<span class="hljs-string">'00'</span> + ((<span class="hljs-number">255</span> * <span class="hljs-number">20</span>) - checksum).toString(<span class="hljs-number">16</span>)).substr(-<span class="hljs-number">3</span>)
+        checksum = (<span class="hljs-string">'00'</span> + ((<span class="hljs-number">256</span> * <span class="hljs-number">20</span>) - checksum).toString(<span class="hljs-number">16</span>)).substr(-<span class="hljs-number">3</span>)
         <span class="hljs-keyword">until</span> i <span class="hljs-keyword">is</span> <span class="hljs-number">2</span>
-            n = parseInt(checksum[i], <span class="hljs-number">16</span>)
+            n = parseInt(checksum[i], <span class="hljs-number">16</span>) + <span class="hljs-number">1</span>
             vi = hash.chain <span class="hljs-property">@heads</span>[<span class="hljs-property">@heads</span>.length - <span class="hljs-number">3</span>] + <span class="hljs-string">'c'</span> + (i + <span class="hljs-number">1</span>), n, <span class="hljs-string">'sha1'</span>
             sig.push vi
             
@@ -271,17 +271,17 @@ use of the signature scheme.</p>
         
         i = <span class="hljs-number">0</span> <span class="hljs-comment"># Verify signature branches.</span>
         <span class="hljs-keyword">until</span> i <span class="hljs-keyword">is</span> h.length
-            n = parseInt(h[i] + h[i + <span class="hljs-number">1</span>], <span class="hljs-number">16</span>)
-            candPubKey += hash.chain sig[i / <span class="hljs-number">2</span>], <span class="hljs-number">255</span> - n, <span class="hljs-string">'sha1'</span>
+            n = parseInt(h[i] + h[i + <span class="hljs-number">1</span>], <span class="hljs-number">16</span>) + <span class="hljs-number">1</span>
+            candPubKey += hash.chain sig[i / <span class="hljs-number">2</span>], <span class="hljs-number">256</span> - n, <span class="hljs-string">'sha1'</span>
             checksum += n
             
             i = i + <span class="hljs-number">2</span>
         
         i = <span class="hljs-number">0</span> <span class="hljs-comment"># Verify checksum branches.</span>
-        checksum = (<span class="hljs-string">'00'</span> + ((<span class="hljs-number">255</span> * <span class="hljs-number">20</span>) - checksum).toString(<span class="hljs-number">16</span>)).substr(-<span class="hljs-number">3</span>)
+        checksum = (<span class="hljs-string">'00'</span> + ((<span class="hljs-number">256</span> * <span class="hljs-number">20</span>) - checksum).toString(<span class="hljs-number">16</span>)).substr(-<span class="hljs-number">3</span>)
         <span class="hljs-keyword">until</span> i <span class="hljs-keyword">is</span> <span class="hljs-number">2</span>
-            n = parseInt(checksum[i], <span class="hljs-number">16</span>)
-            candPubKey += hash.chain sig[i + <span class="hljs-number">20</span>], <span class="hljs-number">255</span> - n, <span class="hljs-string">'sha1'</span>
+            n = parseInt(checksum[i], <span class="hljs-number">16</span>) + <span class="hljs-number">1</span>
+            candPubKey += hash.chain sig[i + <span class="hljs-number">20</span>], <span class="hljs-number">256</span> - n, <span class="hljs-string">'sha1'</span>
             
             ++i
         
@@ -290,12 +290,12 @@ use of the signature scheme.</p>
         
         i = <span class="hljs-number">0</span> <span class="hljs-comment"># Create verification signature branches.</span>
         <span class="hljs-keyword">until</span> i <span class="hljs-keyword">is</span> <span class="hljs-number">20</span>
-            candFinal += hash.chain candPubKey + <span class="hljs-string">'s'</span> + (i + <span class="hljs-number">1</span>), <span class="hljs-number">255</span>, <span class="hljs-string">'sha1'</span>
+            candFinal += hash.chain candPubKey + <span class="hljs-string">'s'</span> + (i + <span class="hljs-number">1</span>), <span class="hljs-number">256</span>, <span class="hljs-string">'sha1'</span>
             ++i
         
         i = <span class="hljs-number">0</span> <span class="hljs-comment"># Create verification checksum branches.</span>
         <span class="hljs-keyword">until</span> i <span class="hljs-keyword">is</span> <span class="hljs-number">2</span>
-            candFinal += hash.chain candPubKey + <span class="hljs-string">'c'</span> + (i + <span class="hljs-number">1</span>), <span class="hljs-number">255</span>, <span class="hljs-string">'sha1'</span>
+            candFinal += hash.chain candPubKey + <span class="hljs-string">'c'</span> + (i + <span class="hljs-number">1</span>), <span class="hljs-number">256</span>, <span class="hljs-string">'sha1'</span>
             ++i
         
         candFinal = hash.chain candFinal, <span class="hljs-number">1</span>, <span class="hljs-string">'sha1'</span>

@@ -44,6 +44,11 @@
               </a>
             
               
+              <a class="source" href="kts.html">
+                kts.coffee
+              </a>
+            
+              
               <a class="source" href="message.html">
                 message.coffee
               </a>
@@ -91,15 +96,13 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">exports</span>.format = <span class="hljs-built_in">require</span> <span class="hljs-string">'./format'</span>
-<span class="hljs-built_in">exports</span>.key = <span class="hljs-built_in">require</span> <span class="hljs-string">'./key'</span>
-<span class="hljs-built_in">exports</span>.hash = <span class="hljs-built_in">require</span> <span class="hljs-string">'./hash'</span>
-<span class="hljs-built_in">exports</span>.message = <span class="hljs-built_in">require</span> <span class="hljs-string">'./message'</span>
-<span class="hljs-built_in">exports</span>.searchable = <span class="hljs-built_in">require</span> <span class="hljs-string">'./searchable'</span>
-<span class="hljs-built_in">exports</span>.commitment = <span class="hljs-built_in">require</span> <span class="hljs-string">'./commitment'</span>
-<span class="hljs-built_in">exports</span>.opse = <span class="hljs-built_in">require</span> <span class="hljs-string">'./opse'</span>
-<span class="hljs-built_in">exports</span>.ots = <span class="hljs-built_in">require</span> <span class="hljs-string">'./ots'</span>
-<span class="hljs-built_in">exports</span>.tree = <span class="hljs-built_in">require</span> <span class="hljs-string">'./tree'</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">exports</span>.format = <span class="hljs-built_in">require</span> <span class="hljs-string">'./format'</span> <span class="hljs-comment"># Formatting</span>
+<span class="hljs-built_in">exports</span>.key = <span class="hljs-built_in">require</span> <span class="hljs-string">'./key'</span> <span class="hljs-comment"># Key Management</span>
+<span class="hljs-built_in">exports</span>.hash = <span class="hljs-built_in">require</span> <span class="hljs-string">'./hash'</span> <span class="hljs-comment"># Hashing</span>
+<span class="hljs-built_in">exports</span>.message = <span class="hljs-built_in">require</span> <span class="hljs-string">'./message'</span> <span class="hljs-comment"># Message Encryption</span>
+<span class="hljs-built_in">exports</span>.searchable = <span class="hljs-built_in">require</span> <span class="hljs-string">'./searchable'</span> <span class="hljs-comment"># Searchable Encryption</span>
+<span class="hljs-built_in">exports</span>.commitment = <span class="hljs-built_in">require</span> <span class="hljs-string">'./commitment'</span> <span class="hljs-comment"># Commitments</span>
+<span class="hljs-built_in">exports</span>.opse = <span class="hljs-built_in">require</span> <span class="hljs-string">'./opse'</span> <span class="hljs-comment"># Order-Preserving Symmetric Encryption</span></pre></div></div>
             
         </li>
         
@@ -109,6 +112,23 @@
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Hash-only constructions:</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">exports</span>.ots = <span class="hljs-built_in">require</span> <span class="hljs-string">'./ots'</span> <span class="hljs-comment"># One-Time Signature (HORS)</span>
+<span class="hljs-built_in">exports</span>.tree = <span class="hljs-built_in">require</span> <span class="hljs-string">'./tree'</span> <span class="hljs-comment"># Merkle Tree</span>
+<span class="hljs-built_in">exports</span>.kts = <span class="hljs-built_in">require</span> <span class="hljs-string">'./kts'</span> <span class="hljs-comment"># k-Time Signature (Merkle-Winternitz Chain)</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
               <p>Setup some aliases that indicate/encourage common use-cases.</p>
 

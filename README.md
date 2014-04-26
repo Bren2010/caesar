@@ -18,6 +18,7 @@ npm install caesar
 5. Commitments
 6. One-Time Signatures (HORS)
 7. Commitments to a Set (Merkle Trees)
+8. k-Time Signatures (MW-Chains)
 
 ## Where I Ramble for a Bit
 

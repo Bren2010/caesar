@@ -1,4 +1,5 @@
 crypto = require 'crypto'
+sha1 = require 'sha1'
 
 # Generates a hash chain (or just a hash).
 #
@@ -7,6 +8,7 @@ crypto = require 'crypto'
 # 3. `alg` is the algorithm to use. *(String)*
 exports.chain = (value, n = 1, alg = 'sha512') ->
     sum = (val) ->
+        if alg is 'sha1' then return sha1 val
         hash = crypto.createHash alg
         hash.end val
         hash.read()

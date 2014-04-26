@@ -1,7 +1,9 @@
-# One-Time Signature schemes are digital signature mechanisms that sign any 
-# given message at most once.  They have a much lower signing and verification 
-# cost than traditional signatures, making them ideal for authenticating
-# broadcast streams.  Use at your own discretion.
+# One-Time Signature schemes are digital signature mechanisms where each  
+# keypair can be used at most once.  They have a much lower signing and 
+# verification cost than traditional signatures, making them ideal for 
+# authenticating broadcast streams.  Use at your own discretion.
+#
+# Implemented here is HORS.  Data of any length may be signed.
 #
 # https://eprint.iacr.org/2002/014.pdf
 crypto = require 'crypto'

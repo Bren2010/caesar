@@ -89,11 +89,7 @@ class exports.Signer
 class exports.Verifier
     constructor: (@publicKey) ->
     
-    # Attempt to verify a signature.
-    #
-    # 1. `msg` is the received message.
-    # 2. `sig` is the candidate signature provided as authentication.
-    verify: (msg, sig) ->
+    forward: (msg, sig) ->
         h = hash.chain msg, 1, 'sha1'
         candPubKey = ''
         checksum = 0
@@ -128,6 +124,15 @@ class exports.Verifier
             ++i
         
         candFinal = hash.chain candFinal, 1, 'sha1'
+        
+        [candPubKey, candFinal]
+    
+    # Attempt to verify a signature.
+    #
+    # 1. `msg` is the received message.
+    # 2. `sig` is the candidate signature provided as authentication.
+    verify: (msg, sig) ->
+        [candPubKey, candFinal] = @forward msg, sig
         
         if candFinal is @publicKey
             @publicKey = candPubKey

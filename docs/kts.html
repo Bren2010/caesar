@@ -245,26 +245,9 @@ use of the signature scheme.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">exports</span>.<span class="hljs-title">Verifier</span></span>
-    <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(<span class="hljs-property">@publicKey</span>)</span> -&gt;</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-7">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
-              </div>
-              <p>Attempt to verify a signature.</p>
-<ol>
-<li><code>msg</code> is the received message.</li>
-<li><code>sig</code> is the candidate signature provided as authentication.</li>
-</ol>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-attribute">verify</span>: <span class="hljs-function"><span class="hljs-params">(msg, sig)</span> -&gt;</span>
+    <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(<span class="hljs-property">@publicKey</span>)</span> -&gt;</span>
+    
+    <span class="hljs-attribute">forward</span>: <span class="hljs-function"><span class="hljs-params">(msg, sig)</span> -&gt;</span>
         h = hash.chain msg, <span class="hljs-number">1</span>, <span class="hljs-string">'sha1'</span>
         candPubKey = <span class="hljs-string">''</span>
         checksum = <span class="hljs-number">0</span>
@@ -299,6 +282,28 @@ use of the signature scheme.</p>
             ++i
         
         candFinal = hash.chain candFinal, <span class="hljs-number">1</span>, <span class="hljs-string">'sha1'</span>
+        
+        [candPubKey, candFinal]</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Attempt to verify a signature.</p>
+<ol>
+<li><code>msg</code> is the received message.</li>
+<li><code>sig</code> is the candidate signature provided as authentication.</li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attribute">verify</span>: <span class="hljs-function"><span class="hljs-params">(msg, sig)</span> -&gt;</span>
+        [candPubKey, candFinal] = <span class="hljs-property">@forward</span> msg, sig
         
         <span class="hljs-keyword">if</span> candFinal <span class="hljs-keyword">is</span> <span class="hljs-property">@publicKey</span>
             <span class="hljs-property">@publicKey</span> = candPubKey

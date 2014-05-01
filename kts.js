@@ -78,7 +78,7 @@
       this.publicKey = publicKey;
     }
 
-    Verifier.prototype.verify = function(msg, sig) {
+    Verifier.prototype.forward = function(msg, sig) {
       var candFinal, candPubKey, checksum, h, i, n;
       h = hash.chain(msg, 1, 'sha1');
       candPubKey = '';
@@ -110,6 +110,12 @@
         ++i;
       }
       candFinal = hash.chain(candFinal, 1, 'sha1');
+      return [candPubKey, candFinal];
+    };
+
+    Verifier.prototype.verify = function(msg, sig) {
+      var candFinal, candPubKey, _ref;
+      _ref = this.forward(msg, sig), candPubKey = _ref[0], candFinal = _ref[1];
       if (candFinal === this.publicKey) {
         this.publicKey = candPubKey;
         return true;

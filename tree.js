@@ -66,7 +66,7 @@
 
   })();
 
-  exports.verify = function(commitment, val, proof, alg) {
+  exports.forward = function(val, proof, alg) {
     var v, _i, _len;
     if (alg == null) {
       alg = 'sha256';
@@ -80,6 +80,14 @@
         val = hash.chain(val.toString() + v[1].toString(), 1, alg);
       }
     }
+    return val;
+  };
+
+  exports.verify = function(commitment, val, proof, alg) {
+    if (alg == null) {
+      alg = 'sha256';
+    }
+    val = exports.forward(val, proof, alg);
     return val.toString() === commitment.toString();
   };
 

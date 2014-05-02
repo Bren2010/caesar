@@ -69,6 +69,17 @@ class exports.Committer
         return proof
 
 
+exports.forward = (val, proof, alg = 'sha256') ->
+    val = hash.chain val, 1, alg
+    
+    for v in proof 
+        if v[0] is 0
+            val = hash.chain v[1].toString() + val.toString(), 1, alg
+        else
+            val = hash.chain val.toString() + v[1].toString(), 1, alg
+    
+    val
+
 # Verify a proof of commitment.
 #
 # 1. `commitment` is the previously published commitment.  *(Buffer)*
@@ -76,13 +87,7 @@ class exports.Committer
 # 3. `proof` is the provided proof.  *(Object)*
 # 4. `alg` is the hash to use.  Default sha256. *(String)*
 exports.verify = (commitment, val, proof, alg = 'sha256') ->
-    val = hash.chain val, 1, alg
-    
-    for v in proof
-        if v[0] is 0
-            val = hash.chain v[1].toString() + val.toString(), 1, alg
-        else
-            val = hash.chain val.toString() + v[1].toString(), 1, alg
+    val = exports.forward val, proof, alg
     
     val.toString() is commitment.toString()
 

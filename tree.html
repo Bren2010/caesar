@@ -201,7 +201,19 @@ be drawn for. <em>(Number)</em></li>
             
             lvl = tmp
         
-        <span class="hljs-keyword">return</span> proof</pre></div></div>
+        <span class="hljs-keyword">return</span> proof
+
+
+<span class="hljs-built_in">exports</span>.<span class="hljs-function"><span class="hljs-title">forward</span> = <span class="hljs-params">(val, proof, alg = <span class="hljs-string">'sha256'</span>)</span> -&gt;</span>
+    val = hash.chain val, <span class="hljs-number">1</span>, alg
+    
+    <span class="hljs-keyword">for</span> v <span class="hljs-keyword">in</span> proof 
+        <span class="hljs-keyword">if</span> v[<span class="hljs-number">0</span>] <span class="hljs-keyword">is</span> <span class="hljs-number">0</span>
+            val = hash.chain v[<span class="hljs-number">1</span>].toString() + val.toString(), <span class="hljs-number">1</span>, alg
+        <span class="hljs-keyword">else</span>
+            val = hash.chain val.toString() + v[<span class="hljs-number">1</span>].toString(), <span class="hljs-number">1</span>, alg
+    
+    val</pre></div></div>
             
         </li>
         
@@ -223,13 +235,7 @@ be drawn for. <em>(Number)</em></li>
             </div>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-built_in">exports</span>.<span class="hljs-function"><span class="hljs-title">verify</span> = <span class="hljs-params">(commitment, val, proof, alg = <span class="hljs-string">'sha256'</span>)</span> -&gt;</span>
-    val = hash.chain val, <span class="hljs-number">1</span>, alg
-    
-    <span class="hljs-keyword">for</span> v <span class="hljs-keyword">in</span> proof
-        <span class="hljs-keyword">if</span> v[<span class="hljs-number">0</span>] <span class="hljs-keyword">is</span> <span class="hljs-number">0</span>
-            val = hash.chain v[<span class="hljs-number">1</span>].toString() + val.toString(), <span class="hljs-number">1</span>, alg
-        <span class="hljs-keyword">else</span>
-            val = hash.chain val.toString() + v[<span class="hljs-number">1</span>].toString(), <span class="hljs-number">1</span>, alg
+    val = <span class="hljs-built_in">exports</span>.forward val, proof, alg
     
     val.toString() <span class="hljs-keyword">is</span> commitment.toString()</pre></div></div>
             

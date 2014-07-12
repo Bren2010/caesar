@@ -122,12 +122,12 @@ to a set of values.</p>
     <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(<span class="hljs-property">@vals</span>, <span class="hljs-property">@alg</span> = <span class="hljs-string">'sha256'</span>)</span> -&gt;</span>
         c = Math.pow(<span class="hljs-number">2</span>, Math.ceil(Math.log(<span class="hljs-property">@vals</span>.length) / Math.log(<span class="hljs-number">2</span>)))
         c = c - <span class="hljs-property">@vals</span>.length <span class="hljs-comment"># Ensure that @vals.length is a power of two.</span>
-        
+
         i = <span class="hljs-number">0</span>
         <span class="hljs-keyword">until</span> i <span class="hljs-keyword">is</span> c
-            <span class="hljs-property">@vals</span>.push <span class="hljs-string">'0000000000'</span>
+            <span class="hljs-property">@vals</span>.push <span class="hljs-string">'0'</span>
             ++i
-        
+
         i = <span class="hljs-number">0</span> <span class="hljs-comment"># Mask each value.</span>
         <span class="hljs-keyword">until</span> i <span class="hljs-keyword">is</span> <span class="hljs-property">@vals</span>.length
             <span class="hljs-property">@vals</span>[i] = hash.chain <span class="hljs-property">@vals</span>[i], <span class="hljs-number">1</span>, <span class="hljs-property">@alg</span>
@@ -142,11 +142,11 @@ to a set of values.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>Calculates the commitment to the given set of objects.  (The head of the 
+              <p>Calculates the commitment to the given set of objects.  (The head of the
 Merkle tree.)  This is what should be published.  It should be noted, this
 function is deterministic.  Given the same set of objects, the same value
-will be output.  If this isn’t desireable, add a random nonce <em>to the end 
-of each commited value.</em>  Simply adding a random nonce as one of the 
+will be output.  If this isn’t desireable, add a random nonce <em>to the end
+of each commited value.</em>  Simply adding a random nonce as one of the
 commited objects is detectable.</p>
 
             </div>
@@ -155,15 +155,15 @@ commited objects is detectable.</p>
         lvl = <span class="hljs-property">@vals</span>
         <span class="hljs-keyword">until</span> lvl.length <span class="hljs-keyword">is</span> <span class="hljs-number">1</span>
             [i, tmp] = [<span class="hljs-number">0</span>, []]
-            
+
             <span class="hljs-keyword">until</span> i <span class="hljs-keyword">is</span> lvl.length
                 v = hash.chain lvl[i].toString() + lvl[i+<span class="hljs-number">1</span>].toString(), <span class="hljs-number">1</span>, <span class="hljs-property">@alg</span>
                 tmp.push v
-                
+
                 i = i + <span class="hljs-number">2</span>
-            
+
             lvl = tmp
-        
+
         <span class="hljs-keyword">return</span> lvl[<span class="hljs-number">0</span>]</pre></div></div>
             
         </li>
@@ -175,10 +175,9 @@ commited objects is detectable.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>Calculate a proof of commitment to a certain value.  This is published 
-when a commitment to a certain object is </p>
+              <p>Calculate a proof of commitment to a certain value.</p>
 <ol>
-<li><code>i</code> is the index in the original array of values that a proof should 
+<li><code>j</code> is the index in the original array of values that a proof should
 be drawn for. <em>(Number)</em></li>
 </ol>
 
@@ -188,32 +187,20 @@ be drawn for. <em>(Number)</em></li>
         [lvl, proof] = [<span class="hljs-property">@vals</span>, []]
         <span class="hljs-keyword">until</span> lvl.length <span class="hljs-keyword">is</span> <span class="hljs-number">1</span>
             [i, tmp] = [<span class="hljs-number">0</span>, []]
-            
+
             <span class="hljs-keyword">until</span> i <span class="hljs-keyword">is</span> lvl.length
                 <span class="hljs-keyword">if</span> i <span class="hljs-keyword">is</span> j <span class="hljs-keyword">then</span> proof.push [<span class="hljs-number">1</span>, lvl[i + <span class="hljs-number">1</span>]]
                 <span class="hljs-keyword">if</span> (i + <span class="hljs-number">1</span>) <span class="hljs-keyword">is</span> j <span class="hljs-keyword">then</span> proof.push [<span class="hljs-number">0</span>, lvl[i]]
                 <span class="hljs-keyword">if</span> i <span class="hljs-keyword">is</span> j <span class="hljs-keyword">or</span> (i + <span class="hljs-number">1</span>) <span class="hljs-keyword">is</span> j <span class="hljs-keyword">then</span> j = Math.floor(j / <span class="hljs-number">2</span>)
-                
+
                 v = hash.chain lvl[i].toString() + lvl[i+<span class="hljs-number">1</span>].toString(), <span class="hljs-number">1</span>, <span class="hljs-property">@alg</span>
                 tmp.push v
-                
+
                 i = i + <span class="hljs-number">2</span>
-            
+
             lvl = tmp
-        
-        <span class="hljs-keyword">return</span> proof
 
-
-<span class="hljs-built_in">exports</span>.<span class="hljs-function"><span class="hljs-title">forward</span> = <span class="hljs-params">(val, proof, alg = <span class="hljs-string">'sha256'</span>)</span> -&gt;</span>
-    val = hash.chain val, <span class="hljs-number">1</span>, alg
-    
-    <span class="hljs-keyword">for</span> v <span class="hljs-keyword">in</span> proof 
-        <span class="hljs-keyword">if</span> v[<span class="hljs-number">0</span>] <span class="hljs-keyword">is</span> <span class="hljs-number">0</span>
-            val = hash.chain v[<span class="hljs-number">1</span>].toString() + val.toString(), <span class="hljs-number">1</span>, alg
-        <span class="hljs-keyword">else</span>
-            val = hash.chain val.toString() + v[<span class="hljs-number">1</span>].toString(), <span class="hljs-number">1</span>, alg
-    
-    val</pre></div></div>
+        <span class="hljs-keyword">return</span> proof</pre></div></div>
             
         </li>
         
@@ -223,6 +210,104 @@ be drawn for. <em>(Number)</em></li>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Calculate a contracted proof of commitment to several values.  This is
+more efficient than publishing several individual proofs.</p>
+<ol>
+<li><code>j</code> is the index in the original array of values that a proof should
+be drawn for. <em>(Number)</em></li>
+<li>…</li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attribute">getSeveralProof</span>: <span class="hljs-function"><span class="hljs-params">(j...)</span> -&gt;</span>
+        [lvl, proof, rid] = [<span class="hljs-property">@vals</span>, [], <span class="hljs-number">0</span>]
+
+        lvl[i] = [<span class="hljs-number">0</span>, val] <span class="hljs-keyword">for</span> i, val <span class="hljs-keyword">of</span> <span class="hljs-property">@vals</span>
+        lvl[i][<span class="hljs-number">0</span>] = <span class="hljs-number">1</span> <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> j
+
+        <span class="hljs-keyword">until</span> lvl.length <span class="hljs-keyword">is</span> <span class="hljs-number">1</span>
+            [i, tmp] = [<span class="hljs-number">0</span>, []]
+
+            <span class="hljs-keyword">until</span> i <span class="hljs-keyword">is</span> lvl.length
+                x = <span class="hljs-keyword">if</span> lvl[i][<span class="hljs-number">0</span>] <span class="hljs-keyword">is</span> <span class="hljs-number">0</span> <span class="hljs-keyword">and</span> lvl[i + <span class="hljs-number">1</span>][<span class="hljs-number">0</span>] <span class="hljs-keyword">is</span> <span class="hljs-number">0</span> <span class="hljs-keyword">then</span> <span class="hljs-number">0</span> <span class="hljs-keyword">else</span> <span class="hljs-number">1</span>
+
+                <span class="hljs-keyword">if</span> lvl[i][<span class="hljs-number">0</span>] <span class="hljs-keyword">is</span> <span class="hljs-number">0</span> <span class="hljs-keyword">and</span> lvl[i + <span class="hljs-number">1</span>][<span class="hljs-number">0</span>] <span class="hljs-keyword">is</span> <span class="hljs-number">1</span>
+                    proof.push [rid, i, lvl[i][<span class="hljs-number">1</span>]]
+                <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lvl[i][<span class="hljs-number">0</span>] <span class="hljs-keyword">is</span> <span class="hljs-number">1</span> <span class="hljs-keyword">and</span> lvl[i + <span class="hljs-number">1</span>][<span class="hljs-number">0</span>] <span class="hljs-keyword">is</span> <span class="hljs-number">0</span>
+                    proof.push [rid, i + <span class="hljs-number">1</span>, lvl[i + <span class="hljs-number">1</span>][<span class="hljs-number">1</span>]]
+
+                [t, u] = [lvl[i][<span class="hljs-number">1</span>].toString(), lvl[i + <span class="hljs-number">1</span>][<span class="hljs-number">1</span>].toString()]
+                v = hash.chain t + u, <span class="hljs-number">1</span>, <span class="hljs-property">@alg</span>
+
+                tmp.push [x, v]
+
+                i = i + <span class="hljs-number">2</span>
+
+            lvl = tmp
+            ++rid
+
+        <span class="hljs-keyword">return</span> proof
+
+
+exports.<span class="hljs-function"><span class="hljs-title">forward</span> = <span class="hljs-params">(val, proof, alg = <span class="hljs-string">'sha256'</span>)</span> -&gt;</span>
+    val = hash.chain val, <span class="hljs-number">1</span>, alg
+
+    <span class="hljs-keyword">for</span> v <span class="hljs-keyword">in</span> proof
+        <span class="hljs-keyword">if</span> v[<span class="hljs-number">0</span>] <span class="hljs-keyword">is</span> <span class="hljs-number">0</span>
+            val = hash.chain v[<span class="hljs-number">1</span>].toString() + val.toString(), <span class="hljs-number">1</span>, alg
+        <span class="hljs-keyword">else</span>
+            val = hash.chain val.toString() + v[<span class="hljs-number">1</span>].toString(), <span class="hljs-number">1</span>, alg
+
+    val
+
+exports.<span class="hljs-function"><span class="hljs-title">forwardSeveral</span> = <span class="hljs-params">(vals, size, proof, alg = <span class="hljs-string">'sha256'</span>)</span> -&gt;</span>
+    vals[i].val = hash.chain vals[i].val, <span class="hljs-number">1</span>, alg <span class="hljs-keyword">for</span> i <span class="hljs-keyword">of</span> vals
+
+    [lvl, rid] = [[], <span class="hljs-number">0</span>]
+    lvl.push <span class="hljs-string">'0'</span> <span class="hljs-keyword">until</span> lvl.length <span class="hljs-keyword">is</span> size
+    lvl[val.id] = val.val <span class="hljs-keyword">for</span> val <span class="hljs-keyword">in</span> vals <span class="hljs-keyword">when</span> val.id &lt; size
+
+    <span class="hljs-keyword">until</span> lvl.length <span class="hljs-keyword">is</span> <span class="hljs-number">1</span>
+        [i, tmp] = [<span class="hljs-number">0</span>, []]
+
+        <span class="hljs-keyword">until</span> i <span class="hljs-keyword">is</span> lvl.length
+            [t, u] = [lvl[i].toString(), lvl[i + <span class="hljs-number">1</span>].toString()]
+
+            <span class="hljs-keyword">if</span> lvl[i][<span class="hljs-number">0</span>] <span class="hljs-keyword">is</span> <span class="hljs-string">'0'</span> <span class="hljs-keyword">and</span> lvl[i + <span class="hljs-number">1</span>] <span class="hljs-keyword">isnt</span> <span class="hljs-string">'0'</span>
+                <span class="hljs-keyword">if</span> proof[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>] <span class="hljs-keyword">is</span> rid <span class="hljs-keyword">and</span> proof[<span class="hljs-number">0</span>][<span class="hljs-number">1</span>] <span class="hljs-keyword">is</span> i
+                    t = proof[<span class="hljs-number">0</span>][<span class="hljs-number">2</span>].toString()
+                    proof.shift()
+                <span class="hljs-keyword">else</span> <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span> <span class="hljs-comment"># Proof is insufficient/malformed.</span>
+            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lvl[i] <span class="hljs-keyword">isnt</span> <span class="hljs-string">'0'</span> <span class="hljs-keyword">and</span> lvl[i + <span class="hljs-number">1</span>] <span class="hljs-keyword">is</span> <span class="hljs-string">'0'</span>
+                <span class="hljs-keyword">if</span> proof[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>] <span class="hljs-keyword">is</span> rid <span class="hljs-keyword">and</span> proof[<span class="hljs-number">0</span>][<span class="hljs-number">1</span>] <span class="hljs-keyword">is</span> (i + <span class="hljs-number">1</span>)
+                    u = proof[<span class="hljs-number">0</span>][<span class="hljs-number">2</span>].toString()
+                    proof.shift()
+                <span class="hljs-keyword">else</span> <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span> <span class="hljs-comment"># Proof is insufficient/malformed.</span>
+
+            <span class="hljs-keyword">if</span> t <span class="hljs-keyword">is</span> <span class="hljs-string">'0'</span> <span class="hljs-keyword">or</span> u <span class="hljs-keyword">is</span> <span class="hljs-string">'0'</span> <span class="hljs-keyword">then</span> v = <span class="hljs-string">'0'</span> <span class="hljs-comment"># Don't bother.</span>
+            <span class="hljs-keyword">else</span> v = hash.chain t + u, <span class="hljs-number">1</span>, alg
+
+            tmp.push v
+
+            i = i + <span class="hljs-number">2</span>
+
+        lvl = tmp
+        ++rid
+
+    <span class="hljs-keyword">if</span> proof.length <span class="hljs-keyword">isnt</span> <span class="hljs-number">0</span> <span class="hljs-keyword">then</span> <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>
+
+    lvl[<span class="hljs-number">0</span>]</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
               <p>Verify a proof of commitment.</p>
 <ol>
@@ -234,9 +319,34 @@ be drawn for. <em>(Number)</em></li>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">exports</span>.<span class="hljs-function"><span class="hljs-title">verify</span> = <span class="hljs-params">(commitment, val, proof, alg = <span class="hljs-string">'sha256'</span>)</span> -&gt;</span>
-    val = <span class="hljs-built_in">exports</span>.forward val, proof, alg
-    
+            <div class="content"><div class='highlight'><pre>exports.<span class="hljs-function"><span class="hljs-title">verify</span> = <span class="hljs-params">(commitment, val, proof, alg = <span class="hljs-string">'sha256'</span>)</span> -&gt;</span>
+    val = exports.forward val, proof, alg
+
+    val.toString() <span class="hljs-keyword">is</span> commitment.toString()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Verify a proof of commitment to several values.</p>
+<ol>
+<li><code>commitment</code> is the previously published commitment.  <em>(String|Buffer)</em></li>
+<li><code>vals</code> is the array of values that are being proven.  <em>(String[]|Buffer[])</em></li>
+<li><code>size</code> is the size of the foot of the Merkle tree. <em>(Number)</em></li>
+<li><code>proof</code> is the provided proof.  <em>(Object)</em></li>
+<li><code>alg</code> is the hash to use.  Default sha256.  <em>(String)</em></li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>exports.<span class="hljs-function"><span class="hljs-title">verifySeveral</span> = <span class="hljs-params">(commitment, vals, size, proof, alg = <span class="hljs-string">'sha256'</span>)</span> -&gt;</span>
+    val = exports.forwardSeveral vals, size, proof, alg
+
     val.toString() <span class="hljs-keyword">is</span> commitment.toString()</pre></div></div>
             
         </li>

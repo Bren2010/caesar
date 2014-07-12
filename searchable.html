@@ -125,8 +125,8 @@ Snowflake or RethinkDB are fine to use.  <em>(Object)</em></li>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">exports</span>.<span class="hljs-title">Indexer</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">stream</span>.<span class="hljs-title">Transform</span></span>
     <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(<span class="hljs-property">@id</span>)</span> -&gt;</span>
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">exports</span>.Indexer
-            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">exports</span>.Indexer <span class="hljs-property">@id</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> exports.Indexer
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> exports.Indexer <span class="hljs-property">@id</span>
         
         stream.Transform.call <span class="hljs-keyword">this</span>, <span class="hljs-attribute">decodeStrings</span>: <span class="hljs-literal">true</span>
         [<span class="hljs-property">@index</span>, <span class="hljs-property">@leftover</span>, <span class="hljs-property">@size</span>] = [{<span class="hljs-attribute">id</span>: <span class="hljs-property">@id</span>, <span class="hljs-attribute">list</span>: {}}, <span class="hljs-string">''</span>, <span class="hljs-number">0</span>]
@@ -179,8 +179,8 @@ Server.index and save the object in a persistent data store.  <em>(Object)</em><
             
             <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">exports</span>.<span class="hljs-title">Server</span></span>
     <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(<span class="hljs-property">@index</span>)</span> -&gt;</span>
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">exports</span>.Server
-            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">exports</span>.Server <span class="hljs-property">@index</span></pre></div></div>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> exports.Server
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> exports.Server <span class="hljs-property">@index</span></pre></div></div>
             
         </li>
         
@@ -273,8 +273,8 @@ owner(s) should be in the <code>public</code> section.  <em>(Object)</em></li>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">exports</span>.<span class="hljs-title">MultiUserServer</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">exports</span>.<span class="hljs-title">Server</span></span>
     <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(state, <span class="hljs-property">@index</span>, <span class="hljs-property">@keychain</span>)</span> -&gt;</span>
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">exports</span>.MultiUserServer
-            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">exports</span>.MultiUserServer state, <span class="hljs-property">@index</span>, <span class="hljs-property">@keychain</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> exports.MultiUserServer
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> exports.MultiUserServer state, <span class="hljs-property">@index</span>, <span class="hljs-property">@keychain</span>
         
         <span class="hljs-keyword">if</span> state <span class="hljs-keyword">isnt</span> <span class="hljs-literal">null</span> <span class="hljs-keyword">then</span> <span class="hljs-property">@state</span> state</pre></div></div>
             
@@ -342,8 +342,8 @@ Client.keys and save the object in a persistent data store.  <em>(Object)</em></
             
             <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">exports</span>.<span class="hljs-title">Client</span></span>
     <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(<span class="hljs-property">@keys</span>)</span> -&gt;</span>
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">exports</span>.Client
-            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">exports</span>.Client <span class="hljs-property">@keys</span></pre></div></div>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> exports.Client
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> exports.Client <span class="hljs-property">@keys</span></pre></div></div>
             
         </li>
         
@@ -555,8 +555,8 @@ need to have the document owner(s)’ public key(s) in the <code>public</code> s
             
             <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">exports</span>.<span class="hljs-title">MultiUserClient</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">exports</span>.<span class="hljs-title">Client</span></span>
     <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(<span class="hljs-property">@keys</span>, <span class="hljs-property">@keychain</span> = {})</span> -&gt;</span>
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">exports</span>.MultiUserClient
-            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">exports</span>.MultiUserClient <span class="hljs-property">@keys</span>, <span class="hljs-property">@keychain</span></pre></div></div>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> exports.MultiUserClient
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> exports.MultiUserClient <span class="hljs-property">@keys</span>, <span class="hljs-property">@keychain</span></pre></div></div>
             
         </li>
         

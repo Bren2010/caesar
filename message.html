@@ -145,8 +145,8 @@ If you get strange errors, try lowering this below the default.  <em>(Number)</e
             
             <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">exports</span>.<span class="hljs-title">Encrypter</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">stream</span>.<span class="hljs-title">Transform</span></span>
     <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(<span class="hljs-property">@keys</span>, <span class="hljs-property">@confidential</span>, <span class="hljs-property">@integrous</span>, <span class="hljs-property">@cut</span> = <span class="hljs-number">14336</span>)</span> -&gt;</span>
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">exports</span>.Encrypter
-            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">exports</span>.Encrypter <span class="hljs-property">@keys</span>, <span class="hljs-property">@confidential</span>, <span class="hljs-property">@integrous</span>, <span class="hljs-property">@cut</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> exports.Encrypter
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> exports.Encrypter <span class="hljs-property">@keys</span>, <span class="hljs-property">@confidential</span>, <span class="hljs-property">@integrous</span>, <span class="hljs-property">@cut</span>
         
         stream.Transform.call <span class="hljs-keyword">this</span>, <span class="hljs-attribute">objectMode</span>: <span class="hljs-literal">true</span>, <span class="hljs-attribute">decodeStrings</span>: <span class="hljs-literal">true</span>
         <span class="hljs-property">@leftover</span> = <span class="hljs-keyword">new</span> Buffer <span class="hljs-number">0</span>
@@ -254,8 +254,8 @@ Must match the Encrypter’s value.  <em>(String)</em></li>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">exports</span>.<span class="hljs-title">Decrypter</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">stream</span>.<span class="hljs-title">Transform</span></span>
     <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(<span class="hljs-property">@keys</span>, <span class="hljs-property">@confidential</span>, <span class="hljs-property">@integrous</span>)</span> -&gt;</span>
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">exports</span>.Decrypter
-            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">exports</span>.Decrypter <span class="hljs-property">@keys</span>, <span class="hljs-property">@confidential</span>, <span class="hljs-property">@integrous</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> exports.Decrypter
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> exports.Decrypter <span class="hljs-property">@keys</span>, <span class="hljs-property">@confidential</span>, <span class="hljs-property">@integrous</span>
         
         stream.Transform.call <span class="hljs-keyword">this</span>, <span class="hljs-attribute">decodeStrings</span>: <span class="hljs-literal">true</span>
         
@@ -388,8 +388,8 @@ user ids, usernames, or randomly generated keys).</p>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">exports</span>.<span class="hljs-title">SIVEncrypter</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">stream</span>.<span class="hljs-title">Transform</span></span>
     <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(<span class="hljs-property">@key1</span>, <span class="hljs-property">@key2</span>)</span> -&gt;</span>
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">exports</span>.SIVEncrypter
-            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">exports</span>.SIVEncrypter <span class="hljs-property">@key1</span>, <span class="hljs-property">@key2</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> exports.SIVEncrypter
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> exports.SIVEncrypter <span class="hljs-property">@key1</span>, <span class="hljs-property">@key2</span>
         
         stream.Transform.call <span class="hljs-keyword">this</span>, <span class="hljs-attribute">objectMode</span>: <span class="hljs-literal">true</span>, <span class="hljs-attribute">decodeStrings</span>: <span class="hljs-literal">true</span>
         <span class="hljs-property">@leftover</span> = <span class="hljs-keyword">new</span> Buffer <span class="hljs-number">0</span>
@@ -437,8 +437,8 @@ user ids, usernames, or randomly generated keys).</p>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">exports</span>.<span class="hljs-title">SIVDecrypter</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">stream</span>.<span class="hljs-title">Transform</span></span>
     <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(<span class="hljs-property">@key1</span>, <span class="hljs-property">@key2</span>)</span> -&gt;</span>
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">exports</span>.SIVDecrypter
-            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">exports</span>.SIVDecrypter <span class="hljs-property">@key1</span>, <span class="hljs-property">@key2</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> exports.SIVDecrypter
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> exports.SIVDecrypter <span class="hljs-property">@key1</span>, <span class="hljs-property">@key2</span>
         
         stream.Transform.call <span class="hljs-keyword">this</span>, <span class="hljs-attribute">decodeStrings</span>: <span class="hljs-literal">true</span>
     
@@ -489,8 +489,8 @@ not divisible by the cut then 0x00s are appended.</li>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">exports</span>.<span class="hljs-title">XTSEncrypter</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">stream</span>.<span class="hljs-title">Transform</span></span>
     <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(<span class="hljs-property">@key</span>, <span class="hljs-property">@cut</span> = <span class="hljs-number">32</span>)</span> -&gt;</span>
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">exports</span>.XTSEncrypter
-            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">exports</span>.XTSEncrypter <span class="hljs-property">@key</span>, <span class="hljs-property">@cut</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> exports.XTSEncrypter
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> exports.XTSEncrypter <span class="hljs-property">@key</span>, <span class="hljs-property">@cut</span>
         
         stream.Transform.call <span class="hljs-keyword">this</span>, <span class="hljs-attribute">decodeStrings</span>: <span class="hljs-literal">true</span>
         <span class="hljs-property">@cipher</span> = crypto.createCipher <span class="hljs-string">'aes-256-xts'</span>, <span class="hljs-property">@key</span>
@@ -521,8 +521,8 @@ not divisible by the cut then 0x00s are appended.</li>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">exports</span>.<span class="hljs-title">XTSDecrypter</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">stream</span>.<span class="hljs-title">Transform</span></span>
     <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(<span class="hljs-property">@key</span>, <span class="hljs-property">@cut</span> = <span class="hljs-number">32</span>)</span> -&gt;</span>
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">exports</span>.XTSDecrypter
-            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">exports</span>.XTSDecrypter <span class="hljs-property">@key</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> exports.XTSDecrypter
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> exports.XTSDecrypter <span class="hljs-property">@key</span>
         
         stream.Transform.call <span class="hljs-keyword">this</span>, <span class="hljs-attribute">decodeStrings</span>: <span class="hljs-literal">true</span>
         <span class="hljs-property">@decipher</span> = crypto.createDecipher <span class="hljs-string">'aes-256-xts'</span>, <span class="hljs-property">@key</span>

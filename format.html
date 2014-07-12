@@ -118,8 +118,8 @@ writeable streams.  Best left alone.</li>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">exports</span>.<span class="hljs-title">EncodeByLine</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">stream</span>.<span class="hljs-title">Transform</span></span>
     <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(opts)</span> -&gt;</span>
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">exports</span>.EncodeByLine
-            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">exports</span>.EncodeByLine opts
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> exports.EncodeByLine
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> exports.EncodeByLine opts
         
         stream.Transform.call <span class="hljs-keyword">this</span>, opts
     
@@ -147,8 +147,8 @@ writeable streams.  Best left alone.</li>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">exports</span>.<span class="hljs-title">DecodeByLine</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">stream</span>.<span class="hljs-title">Transform</span></span>
     <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(opts)</span> -&gt;</span>
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">exports</span>.DecodeByLine
-            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">exports</span>.DecodeByLine opts
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> exports.DecodeByLine
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> exports.DecodeByLine opts
         
         stream.Transform.call <span class="hljs-keyword">this</span>, opts
         <span class="hljs-property">@_lastLine</span> = <span class="hljs-string">""</span>
@@ -185,8 +185,8 @@ writeable streams.  Best left alone.</li>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">exports</span>.<span class="hljs-title">EncodeByLength</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">stream</span>.<span class="hljs-title">Transform</span></span>
     <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(opts)</span> -&gt;</span>
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">exports</span>.EncodeByLength
-            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">exports</span>.EncodeByLength opts
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> exports.EncodeByLength
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> exports.EncodeByLength opts
         
         stream.Transform.call <span class="hljs-keyword">this</span>, opts
     
@@ -220,8 +220,8 @@ writeable streams.  Best left alone.</li>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">exports</span>.<span class="hljs-title">DecodeByLength</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">stream</span>.<span class="hljs-title">Transform</span></span>
     <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(opts)</span> -&gt;</span>
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">exports</span>.DecodeByLength
-            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">exports</span>.DecodeByLength opts
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> exports.DecodeByLength
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> exports.DecodeByLength opts
         
         stream.Transform.call <span class="hljs-keyword">this</span>, opts
         <span class="hljs-property">@_buffer</span> = <span class="hljs-keyword">new</span> Buffer <span class="hljs-string">''</span>

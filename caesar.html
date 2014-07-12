@@ -96,13 +96,13 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">exports</span>.format = <span class="hljs-built_in">require</span> <span class="hljs-string">'./format'</span> <span class="hljs-comment"># Formatting</span>
-<span class="hljs-built_in">exports</span>.key = <span class="hljs-built_in">require</span> <span class="hljs-string">'./key'</span> <span class="hljs-comment"># Key Management</span>
-<span class="hljs-built_in">exports</span>.hash = <span class="hljs-built_in">require</span> <span class="hljs-string">'./hash'</span> <span class="hljs-comment"># Hashing</span>
-<span class="hljs-built_in">exports</span>.message = <span class="hljs-built_in">require</span> <span class="hljs-string">'./message'</span> <span class="hljs-comment"># Message Encryption</span>
-<span class="hljs-built_in">exports</span>.searchable = <span class="hljs-built_in">require</span> <span class="hljs-string">'./searchable'</span> <span class="hljs-comment"># Searchable Encryption</span>
-<span class="hljs-built_in">exports</span>.commitment = <span class="hljs-built_in">require</span> <span class="hljs-string">'./commitment'</span> <span class="hljs-comment"># Commitments</span>
-<span class="hljs-built_in">exports</span>.opse = <span class="hljs-built_in">require</span> <span class="hljs-string">'./opse'</span> <span class="hljs-comment"># Order-Preserving Symmetric Encryption</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>exports.format = <span class="hljs-built_in">require</span> <span class="hljs-string">'./format'</span> <span class="hljs-comment"># Formatting</span>
+exports.key = <span class="hljs-built_in">require</span> <span class="hljs-string">'./key'</span> <span class="hljs-comment"># Key Management</span>
+exports.hash = <span class="hljs-built_in">require</span> <span class="hljs-string">'./hash'</span> <span class="hljs-comment"># Hashing</span>
+exports.message = <span class="hljs-built_in">require</span> <span class="hljs-string">'./message'</span> <span class="hljs-comment"># Message Encryption</span>
+exports.searchable = <span class="hljs-built_in">require</span> <span class="hljs-string">'./searchable'</span> <span class="hljs-comment"># Searchable Encryption</span>
+exports.commitment = <span class="hljs-built_in">require</span> <span class="hljs-string">'./commitment'</span> <span class="hljs-comment"># Commitments</span>
+exports.opse = <span class="hljs-built_in">require</span> <span class="hljs-string">'./opse'</span> <span class="hljs-comment"># Order-Preserving Symmetric Encryption</span></pre></div></div>
             
         </li>
         
@@ -117,9 +117,9 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">exports</span>.ots = <span class="hljs-built_in">require</span> <span class="hljs-string">'./ots'</span> <span class="hljs-comment"># One-Time Signature (HORS)</span>
-<span class="hljs-built_in">exports</span>.tree = <span class="hljs-built_in">require</span> <span class="hljs-string">'./tree'</span> <span class="hljs-comment"># Merkle Tree</span>
-<span class="hljs-built_in">exports</span>.kts = <span class="hljs-built_in">require</span> <span class="hljs-string">'./kts'</span> <span class="hljs-comment"># k-Time Signature (Merkle-Winternitz Chain)</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>exports.ots = <span class="hljs-built_in">require</span> <span class="hljs-string">'./ots'</span> <span class="hljs-comment"># One-Time Signature (HORS)</span>
+exports.tree = <span class="hljs-built_in">require</span> <span class="hljs-string">'./tree'</span> <span class="hljs-comment"># Merkle Tree</span>
+exports.kts = <span class="hljs-built_in">require</span> <span class="hljs-string">'./kts'</span> <span class="hljs-comment"># k-Time Signature (Merkle-Winternitz Chain)</span></pre></div></div>
             
         </li>
         
@@ -134,11 +134,11 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">exports</span>.StreamEncrypter = <span class="hljs-built_in">exports</span>.message.Encrypter <span class="hljs-comment"># Stream data, like sockets.</span>
-<span class="hljs-built_in">exports</span>.StreamDecrypter = <span class="hljs-built_in">exports</span>.message.Decrypter
+            <div class="content"><div class='highlight'><pre>exports.StreamEncrypter = exports.message.Encrypter <span class="hljs-comment"># Stream data, like sockets.</span>
+exports.StreamDecrypter = exports.message.Decrypter
 
-<span class="hljs-built_in">exports</span>.DiskEncrypter = <span class="hljs-built_in">exports</span>.message.XTSEncrypter <span class="hljs-comment"># Files or chunked data.</span>
-<span class="hljs-built_in">exports</span>.DiskDecrypter = <span class="hljs-built_in">exports</span>.message.XTSDecrypter</pre></div></div>
+exports.DiskEncrypter = exports.message.XTSEncrypter <span class="hljs-comment"># Files or chunked data.</span>
+exports.DiskDecrypter = exports.message.XTSDecrypter</pre></div></div>
             
         </li>
         

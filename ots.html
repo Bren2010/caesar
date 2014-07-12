@@ -125,7 +125,7 @@ arguments if you don’t know what they do.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">exports</span>.<span class="hljs-function"><span class="hljs-title">generateKey</span> = <span class="hljs-params">(l = <span class="hljs-number">10</span>, k = <span class="hljs-number">20</span>, t = <span class="hljs-number">256</span>)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>exports.<span class="hljs-function"><span class="hljs-title">generateKey</span> = <span class="hljs-params">(l = <span class="hljs-number">10</span>, k = <span class="hljs-number">20</span>, t = <span class="hljs-number">256</span>)</span> -&gt;</span>
     [s, v] = [[], []]
     
     s.push crypto.randomBytes(l) <span class="hljs-keyword">until</span> s.length <span class="hljs-keyword">is</span> t
@@ -151,7 +151,7 @@ change any of the arguments if you don’t know what they do.</p>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">exports</span>.<span class="hljs-title">Sign</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">stream</span>.<span class="hljs-title">Writable</span></span>
     <span class="hljs-attribute">constructor</span>:<span class="hljs-function"> -&gt;</span>
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">exports</span>.Sign <span class="hljs-keyword">then</span> <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">exports</span>.Sign()
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> exports.Sign <span class="hljs-keyword">then</span> <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> exports.Sign()
         stream.Writable.call <span class="hljs-keyword">this</span>
         
         <span class="hljs-property">@hash</span> = crypto.createHash <span class="hljs-string">'sha1'</span>
@@ -207,7 +207,7 @@ they do.</p>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">exports</span>.<span class="hljs-title">Verify</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">stream</span>.<span class="hljs-title">Writable</span></span>
     <span class="hljs-attribute">constructor</span>:<span class="hljs-function"> -&gt;</span>
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">exports</span>.Verify <span class="hljs-keyword">then</span> <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">exports</span>.Verify()
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> exports.Verify <span class="hljs-keyword">then</span> <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> exports.Verify()
         stream.Writable.call <span class="hljs-keyword">this</span>
         
         <span class="hljs-property">@hash</span> = crypto.createHash <span class="hljs-string">'sha1'</span>

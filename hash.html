@@ -117,7 +117,7 @@ sha1 = <span class="hljs-built_in">require</span> <span class="hljs-string">'sha
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">exports</span>.<span class="hljs-function"><span class="hljs-title">chain</span> = <span class="hljs-params">(value, n = <span class="hljs-number">1</span>, alg = <span class="hljs-string">'sha512'</span>)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>exports.<span class="hljs-function"><span class="hljs-title">chain</span> = <span class="hljs-params">(value, n = <span class="hljs-number">1</span>, alg = <span class="hljs-string">'sha512'</span>)</span> -&gt;</span>
     <span class="hljs-function"><span class="hljs-title">sum</span> = <span class="hljs-params">(val)</span> -&gt;</span>
         <span class="hljs-keyword">if</span> alg <span class="hljs-keyword">is</span> <span class="hljs-string">'sha1'</span> <span class="hljs-keyword">then</span> <span class="hljs-keyword">return</span> sha1 val
         hash = crypto.createHash alg

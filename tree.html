@@ -157,7 +157,8 @@ commited objects is detectable.</p>
             [i, tmp] = [<span class="hljs-number">0</span>, []]
 
             <span class="hljs-keyword">until</span> i <span class="hljs-keyword">is</span> lvl.length
-                v = hash.chain lvl[i].toString() + lvl[i+<span class="hljs-number">1</span>].toString(), <span class="hljs-number">1</span>, <span class="hljs-property">@alg</span>
+                pair = Buffer.concat [lvl[i], lvl[i + <span class="hljs-number">1</span>]]
+                v = hash.chain pair, <span class="hljs-number">1</span>, <span class="hljs-property">@alg</span>
                 tmp.push v
 
                 i = i + <span class="hljs-number">2</span>

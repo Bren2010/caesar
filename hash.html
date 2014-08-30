@@ -119,13 +119,13 @@ sha1 = <span class="hljs-built_in">require</span> <span class="hljs-string">'sha
             
             <div class="content"><div class='highlight'><pre>exports.<span class="hljs-function"><span class="hljs-title">chain</span> = <span class="hljs-params">(value, n = <span class="hljs-number">1</span>, alg = <span class="hljs-string">'sha512'</span>)</span> -&gt;</span>
     <span class="hljs-function"><span class="hljs-title">sum</span> = <span class="hljs-params">(val)</span> -&gt;</span>
-        <span class="hljs-keyword">if</span> alg <span class="hljs-keyword">is</span> <span class="hljs-string">'sha1'</span> <span class="hljs-keyword">then</span> <span class="hljs-keyword">return</span> sha1 val
+        <span class="hljs-keyword">if</span> alg <span class="hljs-keyword">is</span> <span class="hljs-string">'sha1'</span> <span class="hljs-keyword">then</span> <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Buffer(sha1(val), <span class="hljs-string">'hex'</span>)
         hash = crypto.createHash alg
         hash.end val
         hash.read()
-    
+
     [n, value] = [n - <span class="hljs-number">1</span>, sum value] <span class="hljs-keyword">until</span> n <span class="hljs-keyword">is</span> <span class="hljs-number">0</span>
-    
+
     value</pre></div></div>
             
         </li>

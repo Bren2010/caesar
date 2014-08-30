@@ -35,7 +35,8 @@ class exports.Committer
             [i, tmp] = [0, []]
 
             until i is lvl.length
-                v = hash.chain lvl[i].toString() + lvl[i+1].toString(), 1, @alg
+                pair = Buffer.concat [lvl[i], lvl[i + 1]]
+                v = hash.chain pair, 1, @alg
                 tmp.push v
 
                 i = i + 2

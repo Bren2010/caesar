@@ -17,7 +17,7 @@
     sum = function(val) {
       var hash;
       if (alg === 'sha1') {
-        return sha1(val);
+        return new Buffer(sha1(val), 'hex');
       }
       hash = crypto.createHash(alg);
       hash.end(val);

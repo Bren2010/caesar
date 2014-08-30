@@ -25,12 +25,13 @@
     }
 
     Committer.prototype.getCommit = function() {
-      var i, lvl, tmp, v, _ref;
+      var i, lvl, pair, tmp, v, _ref;
       lvl = this.vals;
       while (lvl.length !== 1) {
         _ref = [0, []], i = _ref[0], tmp = _ref[1];
         while (i !== lvl.length) {
-          v = hash.chain(lvl[i].toString() + lvl[i + 1].toString(), 1, this.alg);
+          pair = Buffer.concat([lvl[i], lvl[i + 1]]);
+          v = hash.chain(pair, 1, this.alg);
           tmp.push(v);
           i = i + 2;
         }
